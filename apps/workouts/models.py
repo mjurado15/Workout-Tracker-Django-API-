@@ -4,6 +4,10 @@ from django.db import models
 class ExerciseCategory(models.Model):
     name = models.CharField(max_length=100)
 
+    class Meta:
+        verbose_name = "Exercise Category"
+        verbose_name_plural = "Exercise Categories"
+
     def __str__(self):
         return self.name
 
