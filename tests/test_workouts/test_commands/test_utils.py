@@ -6,6 +6,8 @@ from apps.workouts.management.commands.populate_exercises import (
     remove_duplicate_exercises_by_name_and_category,
 )
 
+pytestmark = [pytest.mark.unit]
+
 
 class TestRemoveDuplicatedItemsByName:
     def test_return_first_ocurrence_of_each_name(self):

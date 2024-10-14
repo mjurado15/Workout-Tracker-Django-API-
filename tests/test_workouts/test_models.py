@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from apps.workouts.models import ExerciseCategory, Exercise
 
 
-pytestmark = pytest.mark.django_db
+pytestmark = [pytest.mark.django_db, pytest.mark.unit]
 
 
 class TestExerciseCategoryModel:

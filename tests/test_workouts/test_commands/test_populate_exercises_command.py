@@ -1,5 +1,6 @@
 import os
 
+import pytest
 from unittest.mock import call
 from django.conf import settings
 from django_mock_queries.query import MockSet, MockModel
@@ -8,6 +9,8 @@ from apps.workouts.management.commands.populate_exercises import (
     Command as PopulateExercisesCommand,
 )
 from apps.workouts.models import ExerciseCategory, Exercise
+
+pytestmark = [pytest.mark.unit]
 
 
 class TestPopulateExercisesCommand:
