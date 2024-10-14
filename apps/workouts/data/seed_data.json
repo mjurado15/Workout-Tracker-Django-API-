@@ -1,0 +1,134 @@
+{
+  "exercise_categories": [
+    {
+      "name": "Cardio",
+      "exercises": [
+        {
+          "name": "Running",
+          "description": "A high-intensity activity that improves cardiovascular endurance by running at a steady pace."
+        },
+        {
+          "name": "Jumping Jacks",
+          "description": "A full-body exercise involving jumping with arms and legs spread out."
+        }
+      ]
+    },
+    {
+      "name": "Strength",
+      "exercises": [
+        {
+          "name": "Squats",
+          "description": "An exercise that targets the lower body muscles by lowering the hips from a standing position."
+        },
+        {
+          "name": "Push-ups",
+          "description": "A bodyweight exercise that works the chest, shoulders, and triceps by pushing the body up from the floor."
+        }
+      ]
+    },
+    {
+      "name": "Flexibility",
+      "exercises": [
+        {
+          "name": "Hamstring Stretch",
+          "description": "A stretch focusing on lengthening the muscles of the back of the thigh."
+        },
+        {
+          "name": "Cat-Cow Stretch",
+          "description": "A yoga movement that improves spinal flexibility by alternating between arching and rounding the back."
+        }
+      ]
+    },
+    {
+      "name": "Endurance",
+      "exercises": [
+        {
+          "name": "Cycling",
+          "description": "A low-impact exercise that improves cardiovascular endurance by pedaling a bicycle."
+        },
+        {
+          "name": "Swimming",
+          "description": "A full-body workout that increases stamina by moving through water."
+        }
+      ]
+    },
+    {
+      "name": "Balance",
+      "exercises": [
+        {
+          "name": "Single-Leg Stand",
+          "description": "A balance exercise that involves standing on one leg to improve stability."
+        },
+        {
+          "name": "Tree Pose",
+          "description": "A yoga pose where one foot is placed on the inner thigh of the opposite leg to improve balance."
+        }
+      ]
+    },
+    {
+      "name": "Speed",
+      "exercises": [
+        {
+          "name": "Sprints",
+          "description": "Short bursts of running at maximum speed to improve overall velocity."
+        },
+        {
+          "name": "High Knees",
+          "description": "A cardio exercise where you rapidly raise your knees to chest level, improving agility and speed."
+        }
+      ]
+    },
+    {
+      "name": "Mobility",
+      "exercises": [
+        {
+          "name": "Hip Circles",
+          "description": "A movement that increases mobility in the hips by rotating them in a circular motion."
+        },
+        {
+          "name": "Arm Swings",
+          "description": "A dynamic warm-up exercise to increase shoulder and arm mobility."
+        }
+      ]
+    },
+    {
+      "name": "Coordination",
+      "exercises": [
+        {
+          "name": "Jump Rope",
+          "description": "An exercise that improves coordination by jumping over a rotating rope."
+        },
+        {
+          "name": "Ladder Drills",
+          "description": "A speed and coordination drill involving quick foot movements through a ladder pattern on the ground."
+        }
+      ]
+    },
+    {
+      "name": "Power",
+      "exercises": [
+        {
+          "name": "Box Jumps",
+          "description": "An explosive movement where you jump onto a box, improving lower body power."
+        },
+        {
+          "name": "Medicine Ball Slams",
+          "description": "A dynamic exercise where you slam a weighted ball to the ground, building upper body power."
+        }
+      ]
+    },
+    {
+      "name": "Stability",
+      "exercises": [
+        {
+          "name": "Planks",
+          "description": "An isometric core exercise that enhances stability by holding a push-up position."
+        },
+        {
+          "name": "Side Planks",
+          "description": "A variation of the plank that focuses on strengthening the obliques and improving lateral stability."
+        }
+      ]
+    }
+  ]
+}

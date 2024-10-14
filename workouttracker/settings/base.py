@@ -34,6 +34,7 @@ BASE_APPS = [
 
 LOCAL_APPS = [
     "apps.users",
+    "apps.workouts",
 ]
 
 THIRD_APPS = [
