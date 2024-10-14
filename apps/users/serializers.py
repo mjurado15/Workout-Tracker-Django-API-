@@ -14,9 +14,7 @@ class SignupSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
         fields = UserSerializer.Meta.fields + ("password",)
         extra_kwargs = {
-            "password": {
-                "min_length": 8,
-            }
+            "password": {"min_length": 8, "write_only": True},
         }
 
     def create(self, validated_data):

@@ -5,7 +5,7 @@ from rest_framework.test import APIClient
 from apps.users.models import User
 from apps.users.serializers import TokenObtainPairSerializer
 
-pytestmark = pytest.mark.django_db
+pytestmark = [pytest.mark.django_db, pytest.mark.integration]
 
 client = APIClient()
 
@@ -16,13 +16,19 @@ class TestSignupView:
     def test_signup_successful(self, user_built):
         response = client.post(self.url, user_built, format="json")
         assert response.status_code == 201
+        assert User.objects.count() == 1
 
-        all_users = User.objects.all()
-        user = all_users.first()
-        assert all_users.count() == 1
-        assert user.email == user_built["email"]
-        assert user.first_name == user_built["first_name"]
-        assert user.last_name == user_built["last_name"]
+        user_created = User.objects.first()
+        assert user_created.email == user_built["email"]
+        assert user_created.first_name == user_built["first_name"]
+        assert user_created.last_name == user_built["last_name"]
+
+        assert response.json() == {
+            "id": user_created.id,
+            "email": user_built["email"],
+            "first_name": user_built["first_name"],
+            "last_name": user_built["last_name"],
+        }
 
     def test_signup_failed_with_incorrect_data(self):
         response = client.post(self.url, {}, format="json")
@@ -34,7 +40,7 @@ class TestSignupView:
         response = client.post(self.url, user_data, format="json")
 
         assert response.status_code == 400
-        assert "email" in response.json()
+        assert set(response.json().keys()) == {"email"}
         assert response.json()["email"][0] == "A user with that email already exists."
 
 
@@ -48,9 +54,8 @@ class TestLoginView:
 
         assert response.status_code == 200
         response_data = response.json()
-        assert "access" in response_data
-        assert "refresh" in response_data
-        assert "user" in response_data
+
+        assert set(response_data.keys()) == {"access", "refresh", "user"}
         assert response_data["user"] == {
             "id": user.id,
             "email": user.email,
@@ -82,9 +87,7 @@ class TestLoginView:
         response = client.post(self.url, access_data, format="json")
 
         assert response.status_code == 400
-        assert response.json() != {}
-        assert "email" in response.json()
-        assert "password" in response.json()
+        assert set(response.json().keys()) == {"email", "password"}
 
 
 class TestRefreshTokenview:
@@ -98,29 +101,24 @@ class TestRefreshTokenview:
         refresh_token = serializer.validated_data["refresh"]
 
         response = client.post(self.url, {"refresh": refresh_token}, format="json")
-        assert response.status_code == 200
-        assert "access" in response.json()
-        assert "refresh" in response.json()
 
-    @pytest.mark.parametrize(
-        "token_data, expected",
-        [
-            ({}, {"status": 400, "message": "This field is required."}),
-            (
-                {"refresh": None},
-                {"status": 400, "message": "This field may not be null."},
-            ),
-            (
-                {"refresh": ""},
-                {"status": 400, "message": "This field may not be blank."},
-            ),
-        ],
-    )
-    def test_refresh_token_failed_with_incorrect_data(self, token_data, expected):
-        response = client.post(self.url, token_data, format="json")
-        assert response.status_code == expected["status"]
-        assert "refresh" in response.json()
-        assert response.json()["refresh"][0] == expected["message"]
+        assert response.status_code == 200
+        assert set(response.json().keys()) == {"access", "refresh"}
+
+    def test_refresh_token_failed_with_incorrect_data(self):
+        response = client.post(self.url, {}, format="json")
+
+        assert response.status_code == 400
+        assert set(response.json().keys()) == {"refresh"}
+        assert response.json()["refresh"][0] == "This field is required."
+
+    @pytest.mark.parametrize("refresh_token", ["", None])
+    def test_refresh_token_failed_with_empty_token(self, refresh_token):
+        data = {"refresh": refresh_token}
+        response = client.post(self.url, data, format="json")
+
+        assert response.status_code == 400
+        assert set(response.json().keys()) == {"refresh"}
 
     def test_refresh_token_failed_with_invalid_token(self):
         response = client.post(self.url, {"refresh": "invalid_token"}, format="json")
