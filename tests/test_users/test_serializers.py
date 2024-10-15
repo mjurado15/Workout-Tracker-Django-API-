@@ -48,9 +48,7 @@ class TestUserSerializer:
         invalid_data = {}
         serializer = UserSerializer(data=invalid_data)
         assert not serializer.is_valid()
-        assert "email" in serializer.errors
-        assert "first_name" in serializer.errors
-        assert "last_name" in serializer.errors
+        assert set(serializer.errors) == {"email", "first_name", "last_name"}
 
 
 class TestSignupSerializer:
@@ -89,10 +87,12 @@ class TestSignupSerializer:
         invalid_data = {}
         serializer = SignupSerializer(data=invalid_data)
         assert not serializer.is_valid()
-        assert "email" in serializer.errors
-        assert "first_name" in serializer.errors
-        assert "last_name" in serializer.errors
-        assert "password" in serializer.errors
+        assert set(serializer.errors) == {
+            "email",
+            "first_name",
+            "last_name",
+            "password",
+        }
 
     def test_unique_email(self, user_built):
         self.exists_mock.return_value = True

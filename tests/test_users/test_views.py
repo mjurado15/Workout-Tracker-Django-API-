@@ -90,7 +90,7 @@ class TestLoginView:
         assert set(response.json().keys()) == {"email", "password"}
 
 
-class TestRefreshTokenview:
+class TestRefreshTokenView:
     url = reverse("refresh-token")
 
     def test_refresh_token_successful(self, create_user_with):

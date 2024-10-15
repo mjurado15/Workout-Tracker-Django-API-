@@ -5,10 +5,10 @@ from . import views
 
 
 urlpatterns = [
-    path("auth/signup/", views.SignupView.as_view(), name="signup"),
-    path("auth/login/", simplejwt_views.TokenObtainPairView.as_view(), name="login"),
+    path("signup/", views.SignupView.as_view(), name="signup"),
+    path("login/", simplejwt_views.TokenObtainPairView.as_view(), name="login"),
     path(
-        "auth/refresh_token/",
+        "refresh_token/",
         simplejwt_views.TokenRefreshView.as_view(),
         name="refresh-token",
     ),
