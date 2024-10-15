@@ -8,14 +8,14 @@ class ExerciseCategoryFactory(DjangoModelFactory):
     class Meta:
         model = ExerciseCategory
 
-    name = "strength"
+    name = factory.Faker("name")
 
 
 class ExerciseFactory(DjangoModelFactory):
     class Meta:
         model = Exercise
 
-    name = "Bicep curl"
+    name = factory.Faker("name")
     category = factory.SubFactory(ExerciseCategoryFactory)
 
     class Params:
