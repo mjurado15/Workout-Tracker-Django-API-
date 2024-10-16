@@ -1,20 +1,21 @@
 import pytest
 
 from django.urls import reverse
-from rest_framework.test import APIClient
+
 
 pytestmark = [pytest.mark.integration, pytest.mark.django_db]
 
-client = APIClient()
 
-
-class TestExerciseViews:
+class TestListExerciseView:
     url = reverse("exercises-list")
 
-    def test_list(self, create_batch_exercises):
+    def test_user_can_access_the_exercises(
+        self, api_client, user_created, create_batch_exercises
+    ):
         exercises = create_batch_exercises(5)
 
-        response = client.get(self.url, format="json")
+        api_client.force_authenticate(user=user_created)
+        response = api_client.get(self.url, format="json")
 
         assert response.status_code == 200
         assert len(response.json()) == len(exercises)
@@ -29,15 +30,34 @@ class TestExerciseViews:
 
         assert response_names == expected_names
 
-    def test_retrieve(self, exercise_created):
-        response = client.get(f"{self.url}{exercise_created.id}/", format="json")
+    def test_unauthenticated_user_cannot_access_exercises(self, api_client):
+        response = api_client.get(self.url, format="json")
+
+        assert response.status_code == 401
+
+
+class TestExerciseViews:
+    url = reverse("exercises-list")
+
+    def test_user_can_retrieve_exercise(
+        self, api_client, user_created, exercise_created
+    ):
+        api_client.force_authenticate(user_created)
+        response = api_client.get(f"{self.url}{exercise_created.id}/", format="json")
 
         assert response.status_code == 200
         assert response.json()["id"] == exercise_created.id
         assert response.json()["name"] == exercise_created.name
 
-    def test_retrieve__not_found_exercise(self):
-        response = client.get(f"{self.url}23/", format="json")
+    def test_user_cannot_retrieve_exercise_that_not_exist(
+        self, api_client, user_created
+    ):
+        api_client.force_authenticate(user_created)
+        response = api_client.get(f"{self.url}23/", format="json")
 
         assert response.status_code == 404
-        assert "detail" in response.json()
+
+    def test_unauthenticated_user_cannot_retrieve_exercise(self, api_client):
+        response = api_client.get(self.url, format="json")
+
+        assert response.status_code == 401

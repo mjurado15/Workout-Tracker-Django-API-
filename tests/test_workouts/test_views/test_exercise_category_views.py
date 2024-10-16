@@ -1,20 +1,20 @@
 import pytest
 
 from django.urls import reverse
-from rest_framework.test import APIClient
 
 pytestmark = [pytest.mark.integration, pytest.mark.django_db]
 
-client = APIClient()
 
-
-class TestExerciseCategoryViews:
+class TestListExerciseCategoryView:
     url = reverse("exercise-categories-list")
 
-    def test_list(self, create_batch_exercise_categories):
+    def test_user_can_access_the_exercise_categories(
+        self, api_client, user_created, create_batch_exercise_categories
+    ):
         categories = create_batch_exercise_categories(5)
 
-        response = client.get(self.url, format="json")
+        api_client.force_authenticate(user=user_created)
+        response = api_client.get(self.url, format="json")
 
         assert response.status_code == 200
         assert len(response.json()) == len(categories)
@@ -29,8 +29,20 @@ class TestExerciseCategoryViews:
 
         assert response_names == category_names
 
-    def test_retrieve(self, exercise_category_created):
-        response = client.get(
+    def test_unauthenticated_user_cannot_access_exercise_categories(self, api_client):
+        response = api_client.get(self.url, format="json")
+
+        assert response.status_code == 401
+
+
+class TestRetrieveExerciseCategoryViews:
+    url = reverse("exercise-categories-list")
+
+    def test_user_can_retrieve_exercise_category(
+        self, api_client, user_created, exercise_category_created
+    ):
+        api_client.force_authenticate(user=user_created)
+        response = api_client.get(
             f"{self.url}{exercise_category_created.id}/", format="json"
         )
 
@@ -40,8 +52,14 @@ class TestExerciseCategoryViews:
             "name": exercise_category_created.name,
         }
 
-    def test_retrieve__not_found_exercise_category(self):
-        response = client.get(f"{self.url}23/", format="json")
-
+    def test_user_cannot_retrieve_exercise_category_that_not_exist(
+        self, api_client, user_created
+    ):
+        api_client.force_authenticate(user=user_created)
+        response = api_client.get(f"{self.url}23/", format="json")
         assert response.status_code == 404
-        assert "detail" in response.json()
+
+    def test_unauthenticated_user_cannot_retrieve_exercise_category(self, api_client):
+        response = api_client.get(f"{self.url}23/", format="json")
+
+        assert response.status_code == 401
