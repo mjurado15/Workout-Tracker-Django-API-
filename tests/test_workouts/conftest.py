@@ -2,7 +2,12 @@ import json
 import pytest
 
 from tests.test_users.factories import UserFactory
-from .factories import ExerciseFactory, ExerciseCategoryFactory, WorkoutPlanFactory
+from .factories import (
+    ExerciseFactory,
+    ExerciseCategoryFactory,
+    WorkoutPlanFactory,
+    ExercisePlanFactory,
+)
 
 
 @pytest.fixture
@@ -117,9 +122,14 @@ def workout_plan_built():
 
 
 @pytest.fixture
-def exercise_plan_built(workout_plan_created):
+def exercise_plan_dict_built(workout_plan_created):
+    exercise_plan_built = ExercisePlanFactory.build()
     return {
-        "name": "Test Exercise Plan",
-        "description": "Test description",
+        "name": exercise_plan_built.name,
         "workout_plan": workout_plan_created,
     }
+
+
+@pytest.fixture
+def exercise_plan_built():
+    return ExercisePlanFactory.build()
