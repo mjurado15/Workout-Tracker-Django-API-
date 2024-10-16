@@ -80,6 +80,7 @@ class TestRetriveWorkoutPlanView:
         api_client.force_authenticate(user=user_created)
         response = api_client.get(f"{self.url}{workout_plan.id}/", format="json")
 
+        assert user_created.id != workout_plan.user.id
         assert response.status_code == 404
 
     def test_unauthenticated_user_cannot_retrieve_workout_plan(self, api_client):
@@ -183,6 +184,7 @@ class TestUpdateWorkoutPlanView:
         api_client.force_authenticate(user_created)
         response = api_client.put(f"{self.url}{workout_plan.id}/", {}, format="json")
 
+        assert user_created.id != workout_plan.user.id
         assert response.status_code == 404
 
     def test_unauthenticated_user_cannot_update_workout_plan(self, api_client):
@@ -232,11 +234,14 @@ class TestPartialUpdateWorkoutPlanView:
         assert response.status_code == 404
 
     def test_user_cannot_partial_update_another_user_s_workout_plan(
-        self, api_client, user_created
+        self, api_client, user_created, create_batch_workout_plans_with
     ):
-        api_client.force_authenticate(user_created)
-        response = api_client.patch(f"{self.url}10/", {}, format="json")
+        workout_plan = create_batch_workout_plans_with(size=1)[0]
 
+        api_client.force_authenticate(user_created)
+        response = api_client.patch(f"{self.url}{workout_plan.id}/", {}, format="json")
+
+        assert user_created.id != workout_plan.user.id
         assert response.status_code == 404
 
     def test_unauthenticated_user_cannot_partial_update_workout_plan(self, api_client):
@@ -277,6 +282,7 @@ class TestDeleteWorkoutPlanViews:
         api_client.force_authenticate(user_created)
         response = api_client.delete(f"{self.url}{workout_plan.id}/", {}, format="json")
 
+        assert user_created.id != workout_plan.user.id
         assert response.status_code == 404
 
     def test_unauthenticated_user_cannot_delete_workout_plan(self, api_client):
