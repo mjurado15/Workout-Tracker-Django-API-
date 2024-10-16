@@ -107,5 +107,19 @@ def create_batch_workout_plans_with():
 
 
 @pytest.fixture
+def workout_plan_created():
+    return WorkoutPlanFactory.create()
+
+
+@pytest.fixture
 def workout_plan_built():
     return WorkoutPlanFactory.build()
+
+
+@pytest.fixture
+def exercise_plan_built(workout_plan_created):
+    return {
+        "name": "Test Exercise Plan",
+        "description": "Test description",
+        "workout_plan": workout_plan_created,
+    }

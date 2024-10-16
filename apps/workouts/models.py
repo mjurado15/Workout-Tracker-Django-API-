@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 from apps.users.models import User
 
@@ -39,7 +40,9 @@ class WorkoutPlan(models.Model):
     name = models.CharField(max_length=150)
     description = models.TextField(blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
-    is_completed = models.BooleanField(default=False)
+    is_completed = models.BooleanField(
+        default=False
+    )  # The workout plan has been completed
     started_at = models.DateTimeField(blank=True, null=True)
     finished_at = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -70,3 +73,25 @@ class WorkoutPlan(models.Model):
             self.finished_at = timezone.now()
 
         return super().save(*args, **kwargs)
+
+
+class ExercisePlan(models.Model):
+    name = models.CharField(max_length=150)
+    description = models.TextField(blank=True)
+    sets = models.IntegerField(null=True, blank=True)
+    reps = models.IntegerField(null=True, blank=True)
+    weight = models.IntegerField(null=True, blank=True)
+    weight_measure_unit = models.CharField(max_length=50, blank=True)
+    workout_plan = models.ForeignKey(
+        WorkoutPlan, on_delete=models.CASCADE, related_name="exercise_plans"
+    )
+    is_completed = models.BooleanField(default=False)  # The exercise has been completed
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Exercise Plan"
+        verbose_name_plural = "Exercise Plans"
+
+    def __str__(self):
+        return self.name
