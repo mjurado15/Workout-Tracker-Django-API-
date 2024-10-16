@@ -1,7 +1,8 @@
 import json
 import pytest
 
-from .factories import ExerciseFactory, ExerciseCategoryFactory
+from tests.test_users.factories import UserFactory
+from .factories import ExerciseFactory, ExerciseCategoryFactory, WorkoutPlanFactory
 
 
 @pytest.fixture
@@ -82,3 +83,29 @@ def create_batch_exercises():
 @pytest.fixture
 def exercise_created():
     return ExerciseFactory.create()
+
+
+@pytest.fixture
+def user_created():
+    return UserFactory.create()
+
+
+@pytest.fixture
+def create_batch_users():
+    def create_users(size):
+        return UserFactory.create_batch(size)
+
+    return create_users
+
+
+@pytest.fixture
+def create_batch_workout_plans_with():
+    def create_workout_plans(size, **kwargs):
+        return WorkoutPlanFactory.create_batch(size, **kwargs)
+
+    return create_workout_plans
+
+
+@pytest.fixture
+def workout_plan_built():
+    return WorkoutPlanFactory.build()

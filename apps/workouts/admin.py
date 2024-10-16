@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import ExerciseCategory, Exercise
+from .models import ExerciseCategory, Exercise, WorkoutPlan
 
 
 class ExerciseCategoryAdmin(admin.ModelAdmin):
@@ -13,5 +13,19 @@ class ExerciseAdmin(admin.ModelAdmin):
     ordering = ("name", "category", "id")
 
 
+class WorkoutPlanAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "user",
+        "status",
+        "is_completed",
+        "started_at",
+        "finished_at",
+        "created_at",
+    )
+    ordering = ("name", "status", "id")
+
+
 admin.site.register(ExerciseCategory, ExerciseCategoryAdmin)
 admin.site.register(Exercise, ExerciseAdmin)
+admin.site.register(WorkoutPlan, WorkoutPlanAdmin)

@@ -1,7 +1,9 @@
 import factory
 from factory.django import DjangoModelFactory
 
-from apps.workouts.models import ExerciseCategory, Exercise
+from tests.test_users.factories import UserFactory
+
+from apps.workouts.models import ExerciseCategory, Exercise, WorkoutPlan
 
 
 class ExerciseCategoryFactory(DjangoModelFactory):
@@ -22,3 +24,12 @@ class ExerciseFactory(DjangoModelFactory):
         create_category = factory.Trait(
             category=factory.LazyFunction(ExerciseCategoryFactory.create)
         )
+
+
+class WorkoutPlanFactory(DjangoModelFactory):
+    class Meta:
+        model = WorkoutPlan
+
+    name = factory.Faker("sentence", nb_words=3)
+    description = factory.Faker("sentence", nb_words=10)
+    user = factory.SubFactory(UserFactory)

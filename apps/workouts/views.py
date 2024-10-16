@@ -7,7 +7,7 @@ from . import models, serializers
 class ExerciseCategoryViewSet(
     viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin
 ):
-    queryset = models.ExerciseCategory.objects.all().order_by("name", "id")
+    queryset = models.ExerciseCategory.objects.all().order_by("name", "-id")
     serializer_class = serializers.ExerciseCategorySerializer
 
 
@@ -15,6 +15,15 @@ class ExerciseViewSet(
     viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin
 ):
     queryset = models.Exercise.objects.all().order_by(
-        Lower("name"), Lower("category__name"), "id"
+        Lower("name"), Lower("category__name"), "-id"
     )
     serializer_class = serializers.ExerciseSerializer
+
+
+class WorkoutPlanViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.WorkoutPlanSerializer
+
+    def get_queryset(self):
+        return models.WorkoutPlan.objects.filter(user=self.request.user).order_by(
+            "-created_at", "-id"
+        )
