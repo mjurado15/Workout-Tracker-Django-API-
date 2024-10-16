@@ -76,6 +76,9 @@ class WorkoutPlan(models.Model):
 
 
 class ExercisePlan(models.Model):
+    exercise = models.ForeignKey(
+        Exercise, on_delete=models.CASCADE, related_name="exercise_plans"
+    )
     name = models.CharField(max_length=150)
     description = models.TextField(blank=True)
     sets = models.IntegerField(null=True, blank=True)

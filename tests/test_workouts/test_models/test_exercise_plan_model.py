@@ -45,6 +45,7 @@ class TestExercisePlanModel:
         [
             ("name", ""),
             ("workout_plan", None),
+            ("exercise", None),
         ],
     )
     def test_required_field_cannot_be_empty(
@@ -110,8 +111,17 @@ class TestExercisePlanModel:
             exercise_plan = ExercisePlan(**exercise_plan_dict_built)
             exercise_plan.full_clean()
 
-    def test_invalid_workout_plan(self, exercise_plan_dict_built):
-        exercise_plan_dict_built["workout_plan"] = "invalid workout plan"
+    @pytest.mark.parametrize(
+        "field, invalid_value",
+        [
+            ("workout_plan", "Invalid workout plan"),
+            ("exercise", 23),
+        ],
+    )
+    def test_invalid_relation_field(
+        self, exercise_plan_dict_built, field, invalid_value
+    ):
+        exercise_plan_dict_built[field] = invalid_value
 
         with pytest.raises(ValueError):
             exercise_plan = ExercisePlan(**exercise_plan_dict_built)
@@ -142,10 +152,27 @@ class TestExercisePlanModel:
         exercise_plan = ExercisePlan(**exercise_plan_dict_built)
         assert str(exercise_plan) == exercise_plan.name
 
-    def test_set_weight_requires_set_weight_measure_unit(
-        self, exercise_plan_dict_built
-    ):
-        exercise_plan_dict_built["weight"] = 23
+    @pytest.mark.parametrize(
+        "field",
+        ["exercise", "workout_plan"],
+    )
+    def test_cascade_related_delete(self, exercise_plan_dict_built, field):
+        related_instance = exercise_plan_dict_built[field]
+        exercise_plan_created = ExercisePlan.objects.create(**exercise_plan_dict_built)
 
-        exercise_plan = ExercisePlan(**exercise_plan_dict_built)
-        exercise_plan.full_clean()
+        assert exercise_plan_created in ExercisePlan.objects.all()
+
+        related_instance.delete()
+        assert exercise_plan_created not in ExercisePlan.objects.all()
+
+    @pytest.mark.parametrize(
+        "field",
+        ["exercise", "workout_plan"],
+    )
+    def test_related_names(self, exercise_plan_dict_built, field):
+        related_instance = exercise_plan_dict_built[field]
+
+        exercise_plan_created = ExercisePlan.objects.create(**exercise_plan_dict_built)
+
+        assert related_instance.exercise_plans.count() == 1
+        assert exercise_plan_created in related_instance.exercise_plans.all()

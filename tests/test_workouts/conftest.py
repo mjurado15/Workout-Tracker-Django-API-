@@ -122,11 +122,12 @@ def workout_plan_built():
 
 
 @pytest.fixture
-def exercise_plan_dict_built(workout_plan_created):
+def exercise_plan_dict_built(workout_plan_created, exercise_created):
     exercise_plan_built = ExercisePlanFactory.build()
     return {
         "name": exercise_plan_built.name,
         "workout_plan": workout_plan_created,
+        "exercise": exercise_created,
     }
 
 
