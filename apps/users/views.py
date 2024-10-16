@@ -5,6 +5,8 @@ from . import serializers
 
 
 class SignupView(views.APIView):
+    permission_classes = []
+
     def post(self, request, *args, **kwargs):
         serializer = serializers.SignupSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
