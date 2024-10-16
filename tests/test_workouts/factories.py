@@ -3,7 +3,7 @@ from factory.django import DjangoModelFactory
 
 from tests.test_users.factories import UserFactory
 
-from apps.workouts.models import ExerciseCategory, Exercise, WorkoutPlan
+from apps.workouts.models import ExerciseCategory, Exercise, WorkoutPlan, ExercisePlan
 
 
 class ExerciseCategoryFactory(DjangoModelFactory):
@@ -33,3 +33,15 @@ class WorkoutPlanFactory(DjangoModelFactory):
     name = factory.Faker("sentence", nb_words=3)
     description = factory.Faker("sentence", nb_words=10)
     user = factory.SubFactory(UserFactory)
+
+
+class ExercisePlanFactory(DjangoModelFactory):
+    class Meta:
+        model = ExercisePlan
+
+    name = factory.Faker("sentence", nb_words=5)
+    description = factory.Faker("sentence", nb_words=10)
+    sets = factory.Faker("pyint", min_value=1, max_value=5)
+    reps = factory.Faker("pyint", min_value=1, max_value=30)
+    weight = factory.Faker("pyint", min_value=10, max_value=100)
+    weight_measure_unit = "pound"

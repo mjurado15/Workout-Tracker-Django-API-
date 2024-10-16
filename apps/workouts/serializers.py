@@ -18,6 +18,17 @@ class ExerciseSerializer(serializers.ModelSerializer):
         return super().to_representation(instance)
 
 
+class ExercisePlanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ExercisePlan
+        exclude = ["workout_plan", "updated_at"]
+        read_only_fields = ["is_completed"]
+
+    def create(self, validated_data):
+        validated_data["workout_plan"] = self.context["workout_plan"]
+        return super().create(validated_data)
+
+
 class WorkoutPlanSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.WorkoutPlan
