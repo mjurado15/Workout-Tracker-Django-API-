@@ -1,7 +1,7 @@
 import pytest
 from django_mock_queries.query import MockModel, MockSet
 
-from apps.workouts.serializers import ExerciseSerializer
+from apps.workouts.serializers import ExerciseSerializer, NestedExerciseSerializer
 
 pytestmark = [pytest.mark.unit]
 
@@ -97,3 +97,25 @@ class TestExerciseSerializer:
 
         assert serializer.is_valid()
         assert "extra_field" not in serializer.validated_data
+
+
+class TestNestedExerciseSerializer:
+    def test_serializer_model_with_category_str(self):
+        mock_category = MockModel(pk=1, name="Cardio")
+        type(mock_category).__str__ = lambda self: "Cardio"
+
+        exercise_data = {
+            "name": "Running",
+            "description": "Running description",
+            "category": mock_category,
+        }
+        mock_exercise = MockModel(**exercise_data)
+
+        serializer = NestedExerciseSerializer(mock_exercise)
+
+        expected_data = {
+            **exercise_data,
+            "category": "Cardio",
+        }
+
+        assert serializer.data == expected_data

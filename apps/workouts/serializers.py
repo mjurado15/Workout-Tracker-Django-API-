@@ -14,8 +14,12 @@ class ExerciseSerializer(serializers.ModelSerializer):
         model = models.Exercise
         fields = "__all__"
 
-    def to_representation(self, instance):
-        return super().to_representation(instance)
+
+class NestedExerciseSerializer(ExerciseSerializer):
+    category = serializers.SerializerMethodField()
+
+    def get_category(self, instance):
+        return str(instance.category)
 
 
 class ExercisePlanSerializer(serializers.ModelSerializer):
@@ -23,6 +27,11 @@ class ExercisePlanSerializer(serializers.ModelSerializer):
         model = models.ExercisePlan
         exclude = ["workout_plan", "updated_at"]
         read_only_fields = ["is_completed"]
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation["exercise"] = NestedExerciseSerializer(instance.exercise).data
+        return representation
 
     def create(self, validated_data):
         validated_data["workout_plan"] = self.context["workout_plan"]

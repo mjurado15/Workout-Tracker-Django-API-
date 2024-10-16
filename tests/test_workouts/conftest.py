@@ -134,3 +134,11 @@ def exercise_plan_dict_built(workout_plan_created, exercise_created):
 @pytest.fixture
 def exercise_plan_built():
     return ExercisePlanFactory.build()
+
+
+@pytest.fixture
+def create_batch_exercise_plans_with():
+    def create_exercise_plans(size, **kwargs):
+        return ExercisePlanFactory.create_batch(size, **kwargs)
+
+    return create_exercise_plans
