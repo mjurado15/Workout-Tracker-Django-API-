@@ -88,3 +88,14 @@ class WorkoutPlanStatusSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         raise NotImplementedError("`create()` must be implemented.")
+
+
+class WorkoutCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.WorkoutComment
+        fields = "__all__"
+        read_only_fields = ["workout_plan", "created_at", "updated_at"]
+
+    def create(self, validated_data):
+        validated_data["workout_plan"] = self.context["workout_plan"]
+        return super().create(validated_data)
