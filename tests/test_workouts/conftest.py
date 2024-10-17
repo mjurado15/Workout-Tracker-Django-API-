@@ -137,6 +137,11 @@ def exercise_plan_built():
 
 
 @pytest.fixture
+def exercise_plan_created():
+    return ExercisePlanFactory.create()
+
+
+@pytest.fixture
 def create_batch_exercise_plans_with():
     def create_exercise_plans(size, **kwargs):
         return ExercisePlanFactory.create_batch(size, **kwargs)

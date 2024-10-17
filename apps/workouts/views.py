@@ -1,5 +1,8 @@
-from rest_framework import mixins, viewsets
+from rest_framework import mixins, viewsets, status
+from rest_framework.response import Response
+from rest_framework.decorators import action
 from django.db.models.functions import Lower
+from django.shortcuts import get_object_or_404
 
 from . import models, serializers
 
@@ -27,3 +30,60 @@ class WorkoutPlanViewSet(viewsets.ModelViewSet):
         return models.WorkoutPlan.objects.filter(user=self.request.user).order_by(
             "-created_at", "-id"
         )
+
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    @action(methods=["GET", "POST"], detail=True)
+    def exercise_plans(self, request, *args, **kwargs):
+        workout_instance = self.get_object()
+
+        if request.method == "GET":
+            exercise_plans = workout_instance.exercise_plans.all()
+            serializer = serializers.ExercisePlanSerializer(exercise_plans, many=True)
+            return Response(serializer.data)
+
+        elif request.method == "POST":
+            serializer = serializers.ExercisePlanSerializer(
+                data=request.data, context={"workout_plan": workout_instance}
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(
+        methods=["GET", "PUT", "PATCH", "DELETE"],
+        detail=True,
+        url_path="exercise_plans/(?P<exercise_pk>[^/.]+)",
+    )
+    def exercise_plan_detail(self, request, *args, **kwargs):
+        workout_instance = self.get_object()
+        exercise_plan = get_object_or_404(
+            models.ExercisePlan,
+            pk=kwargs.get("exercise_pk"),
+            workout_plan=workout_instance,
+        )
+
+        if request.method == "GET":
+            serializer = serializers.ExercisePlanSerializer(exercise_plan)
+            return Response(serializer.data)
+
+        elif request.method == "PUT":
+            serializer = serializers.ExercisePlanSerializer(
+                exercise_plan, data=request.data, partial=False
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+
+        elif request.method == "PATCH":
+            serializer = serializers.ExercisePlanSerializer(
+                exercise_plan, data=request.data, partial=True
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+
+        elif request.method == "DELETE":
+            exercise_plan.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)

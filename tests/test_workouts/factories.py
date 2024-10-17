@@ -45,3 +45,6 @@ class ExercisePlanFactory(DjangoModelFactory):
     reps = factory.Faker("pyint", min_value=1, max_value=30)
     weight = factory.Faker("pyint", min_value=10, max_value=100)
     weight_measure_unit = "pound"
+
+    workout_plan = factory.SubFactory(WorkoutPlanFactory)
+    exercise = factory.SubFactory(ExerciseFactory)
