@@ -98,3 +98,15 @@ class ExercisePlan(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class WorkoutComment(models.Model):
+    comment = models.TextField()
+    workout_plan = models.ForeignKey(
+        WorkoutPlan, on_delete=models.CASCADE, related_name="comments"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.id
