@@ -31,8 +31,16 @@ class WorkoutPlanViewSet(viewsets.ModelViewSet):
             "-created_at", "-id"
         )
 
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
+    @action(methods=["POST"], detail=True)
+    def change_of_status(self, request, *args, **kwargs):
+        workout_instance = self.get_object()
+
+        serializer = serializers.WorkoutPlanStatusSerializer(
+            workout_instance, data=request.data
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
     @action(methods=["GET", "POST"], detail=True)
     def exercise_plans(self, request, *args, **kwargs):

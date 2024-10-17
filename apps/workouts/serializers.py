@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from . import models
 
@@ -53,3 +54,37 @@ class WorkoutPlanSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data["user"] = self.context["request"].user
         return super().create(validated_data)
+
+
+class WorkoutPlanStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.WorkoutPlan
+        fields = [
+            "id",
+            "status",
+            "started_at",
+            "finished_at",
+        ]
+        read_only_fields = [
+            "started_at",
+            "finished_at",
+        ]
+        extra_kwargs = {
+            "status": {"required": True},
+        }
+
+    def validate_status(self, value):
+        if self.instance is not None:
+            if value == "finished" and self.instance.status == "pending":
+                raise ValidationError(
+                    "The status cannot change directly from pending to finished"
+                )
+            if value == "pending" and self.instance.status == "finished":
+                raise ValidationError(
+                    "The status cannot change from finished to pending"
+                )
+
+        return value
+
+    def create(self, validated_data):
+        raise NotImplementedError("`create()` must be implemented.")

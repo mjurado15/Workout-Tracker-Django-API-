@@ -288,3 +288,73 @@ class TestDeleteWorkoutPlanViews:
     def test_unauthenticated_user_cannot_delete_workout_plan(self, api_client):
         response = api_client.delete(f"{self.url}1/", format="json")
         assert response.status_code == 401
+
+
+class TestChangeOfStatusView:
+    url = reverse("workout-plans-list")
+    extra_url = "change_of_status/"
+
+    def test_user_can_change_the_status_of_his_workout_plan(
+        self, api_client, workout_plan_created
+    ):
+        authenticated_user = workout_plan_created.user
+        status_data = {"status": "active"}
+
+        api_client.force_authenticate(user=authenticated_user)
+        response = api_client.post(
+            f"{self.url}{workout_plan_created.id}/{self.extra_url}",
+            status_data,
+            format="json",
+        )
+
+        assert response.status_code == 200
+        assert response.data["id"] == workout_plan_created.id
+        assert response.data["status"] == status_data["status"]
+        assert workout_plan_created.started_at is None
+        assert workout_plan_created.finished_at is None
+        assert response.data["started_at"] is not None
+        assert response.data["finished_at"] is None
+
+    def test_user_cannot_change_the_status_of_another_user_s_workout_plan(
+        self, api_client, workout_plan_created, user_created
+    ):
+        status_data = {"status": "active"}
+
+        api_client.force_authenticate(user=user_created)
+        response = api_client.post(
+            f"{self.url}{workout_plan_created.id}/{self.extra_url}",
+            status_data,
+            format="json",
+        )
+
+        assert workout_plan_created.user.id != user_created.id
+        assert response.status_code == 404
+        assert response.data["detail"] == "No WorkoutPlan matches the given query."
+
+    def test_user_cannot_change_the_status_of_workout_plan_that_not_exist(
+        self, api_client, user_created
+    ):
+        status_data = {"status": "active"}
+
+        api_client.force_authenticate(user=user_created)
+        response = api_client.post(
+            f"{self.url}{10}/{self.extra_url}",
+            status_data,
+            format="json",
+        )
+
+        assert response.status_code == 404
+        assert response.data["detail"] == "No WorkoutPlan matches the given query."
+
+    def test_unauthenticated_user_cannot_change_the_status(
+        self, api_client, workout_plan_created
+    ):
+        status_data = {"status": "active"}
+
+        response = api_client.post(
+            f"{self.url}{workout_plan_created.id}/{self.extra_url}",
+            status_data,
+            format="json",
+        )
+
+        assert response.status_code == 401
