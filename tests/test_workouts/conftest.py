@@ -7,6 +7,7 @@ from .factories import (
     ExerciseCategoryFactory,
     WorkoutPlanFactory,
     ExercisePlanFactory,
+    CommentFactory,
 )
 
 
@@ -147,3 +148,21 @@ def create_batch_exercise_plans_with():
         return ExercisePlanFactory.create_batch(size, **kwargs)
 
     return create_exercise_plans
+
+
+@pytest.fixture
+def comment_created():
+    return CommentFactory.create()
+
+
+@pytest.fixture
+def create_batch_comments_with():
+    def create_comments(size, **kwargs):
+        return CommentFactory.create_batch(size, **kwargs)
+
+    return create_comments
+
+
+@pytest.fixture
+def comment_built():
+    return CommentFactory.build()

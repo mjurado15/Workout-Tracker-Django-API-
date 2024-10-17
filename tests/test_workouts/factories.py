@@ -3,7 +3,13 @@ from factory.django import DjangoModelFactory
 
 from tests.test_users.factories import UserFactory
 
-from apps.workouts.models import ExerciseCategory, Exercise, WorkoutPlan, ExercisePlan
+from apps.workouts.models import (
+    ExerciseCategory,
+    Exercise,
+    WorkoutPlan,
+    ExercisePlan,
+    WorkoutComment,
+)
 
 
 class ExerciseCategoryFactory(DjangoModelFactory):
@@ -48,3 +54,11 @@ class ExercisePlanFactory(DjangoModelFactory):
 
     workout_plan = factory.SubFactory(WorkoutPlanFactory)
     exercise = factory.SubFactory(ExerciseFactory)
+
+
+class CommentFactory(DjangoModelFactory):
+    class Meta:
+        model = WorkoutComment
+
+    comment = factory.Faker("sentence", nb_words=10)
+    workout_plan = factory.SubFactory(WorkoutPlanFactory)

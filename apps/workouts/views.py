@@ -82,7 +82,7 @@ class WorkoutPlanViewSet(viewsets.ModelViewSet):
             serializer = serializers.ExercisePlanSerializer(exercise_plan)
             return Response(serializer.data)
 
-        elif request.method == "PUT":
+        if request.method == "PUT":
             serializer = serializers.ExercisePlanSerializer(
                 exercise_plan, data=request.data, partial=False
             )
@@ -90,7 +90,7 @@ class WorkoutPlanViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data)
 
-        elif request.method == "PATCH":
+        if request.method == "PATCH":
             serializer = serializers.ExercisePlanSerializer(
                 exercise_plan, data=request.data, partial=True
             )
@@ -98,6 +98,58 @@ class WorkoutPlanViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data)
 
-        elif request.method == "DELETE":
+        if request.method == "DELETE":
             exercise_plan.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(methods=["GET", "POST"], detail=True)
+    def comments(self, request, *args, **kwargs):
+        workout_instance = self.get_object()
+
+        if request.method == "GET":
+            comments = workout_instance.comments.all().order_by("-created_at", "-id")
+
+            page = self.paginate_queryset(comments)
+            if page is not None:
+                serializer = serializers.WorkoutCommentSerializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+
+            serializer = serializers.WorkoutCommentSerializer(comments, many=True)
+            return Response(serializer.data)
+
+        if request.method == "POST":
+            serializer = serializers.WorkoutCommentSerializer(
+                data=request.data, context={"workout_plan": workout_instance}
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(
+        methods=["GET", "PUT", "DELETE"],
+        detail=True,
+        url_path="comments/(?P<comment_pk>[^/.]+)",
+    )
+    def comment_detail(self, request, *args, **kwargs):
+        workout_instance = self.get_object()
+        comment = get_object_or_404(
+            models.WorkoutComment,
+            pk=kwargs.get("comment_pk"),
+            workout_plan=workout_instance,
+        )
+
+        if request.method == "GET":
+            serializer = serializers.WorkoutCommentSerializer(comment)
+            return Response(serializer.data)
+
+        if request.method == "PUT":
+            serializer = serializers.WorkoutCommentSerializer(
+                comment, data=request.data
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+
+        if request.method == "DELETE":
+            comment.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
