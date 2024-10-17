@@ -24,9 +24,12 @@ class TestListWorkoutPlanView:
         response = api_client.get(self.url, format="json")
 
         assert response.status_code == 200
-        assert len(response.data) == 3
+        assert set(response.data.keys()) == {"count", "next", "previous", "results"}
+        assert len(response.data["results"]) == len(user_workout_plans)
 
-        response_plans_names = {(item["id"], item["name"]) for item in response.data}
+        response_plans_names = {
+            (item["id"], item["name"]) for item in response.data["results"]
+        }
         expected_plans_names = {(item.id, item.name) for item in user_workout_plans}
 
         assert response_plans_names == expected_plans_names
@@ -41,7 +44,7 @@ class TestListWorkoutPlanView:
         response = api_client.get(self.url, format="json")
 
         assert response.status_code == 200
-        ids = [plan["id"] for plan in response.data]
+        ids = [plan["id"] for plan in response.data["results"]]
 
         assert ids == [workout_plan2.id, workout_plan1.id]
 

@@ -18,9 +18,10 @@ class TestListExerciseView:
         response = api_client.get(self.url, format="json")
 
         assert response.status_code == 200
-        assert len(response.json()) == len(exercises)
+        assert set(response.data.keys()) == {"count", "next", "previous", "results"}
+        assert len(response.data["results"]) == len(exercises)
 
-        response_exercises = response.json()
+        response_exercises = response.data["results"]
 
         # Check that all exercise ids and names match
         response_names = {

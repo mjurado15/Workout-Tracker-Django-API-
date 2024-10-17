@@ -17,9 +17,10 @@ class TestListExerciseCategoryView:
         response = api_client.get(self.url, format="json")
 
         assert response.status_code == 200
-        assert len(response.json()) == len(categories)
+        assert set(response.data.keys()) == {"count", "next", "previous", "results"}
+        assert len(response.data["results"]) == len(categories)
 
-        response_categories = response.json()
+        response_categories = response.data["results"]
 
         # Check that all category ids and names match
         response_names = {

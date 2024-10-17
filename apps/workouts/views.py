@@ -47,7 +47,13 @@ class WorkoutPlanViewSet(viewsets.ModelViewSet):
         workout_instance = self.get_object()
 
         if request.method == "GET":
-            exercise_plans = workout_instance.exercise_plans.all()
+            exercise_plans = workout_instance.exercise_plans.all().order_by("-id")
+
+            page = self.paginate_queryset(exercise_plans)
+            if page is not None:
+                serializer = serializers.ExercisePlanSerializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+
             serializer = serializers.ExercisePlanSerializer(exercise_plans, many=True)
             return Response(serializer.data)
 
