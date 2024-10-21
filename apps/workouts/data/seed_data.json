@@ -1,0 +1,254 @@
+{
+  "exercise_categories": [
+    {
+      "name": "Cardio",
+      "exercises": [
+        {
+          "name": "Running",
+          "description": "A high-intensity activity that improves cardiovascular endurance by running at a steady pace."
+        },
+        {
+          "name": "Jumping Jacks",
+          "description": "A full-body exercise involving jumping with arms and legs spread out."
+        },
+        {
+          "name": "Burpees",
+          "description": "A full-body exercise that combines squats, push-ups, and jumps to boost cardio fitness."
+        },
+        {
+          "name": "Mountain Climbers",
+          "description": "An exercise that engages the core and mimics a climbing motion."
+        },
+        {
+          "name": "Rowing",
+          "description": "A cardio workout that simulates rowing, engaging multiple muscle groups."
+        }
+      ]
+    },
+    {
+      "name": "Strength",
+      "exercises": [
+        {
+          "name": "Squats",
+          "description": "An exercise that targets the lower body muscles by lowering the hips from a standing position."
+        },
+        {
+          "name": "Push-ups",
+          "description": "A bodyweight exercise that works the chest, shoulders, and triceps by pushing the body up from the floor."
+        },
+        {
+          "name": "Deadlifts",
+          "description": "A weightlifting movement focusing on the lower back and hamstrings."
+        },
+        {
+          "name": "Bench Press",
+          "description": "A strength exercise that targets the chest by pressing a barbell upward."
+        },
+        {
+          "name": "Lunges",
+          "description": "A lower body exercise that strengthens the legs and improves balance."
+        }
+      ]
+    },
+    {
+      "name": "Flexibility",
+      "exercises": [
+        {
+          "name": "Hamstring Stretch",
+          "description": "A stretch focusing on lengthening the muscles of the back of the thigh."
+        },
+        {
+          "name": "Cat-Cow Stretch",
+          "description": "A yoga movement that improves spinal flexibility by alternating between arching and rounding the back."
+        },
+        {
+          "name": "Quad Stretch",
+          "description": "A stretch that targets the quadriceps by pulling the foot toward the glutes."
+        },
+        {
+          "name": "Butterfly Stretch",
+          "description": "A stretch that opens the hips and stretches the inner thighs."
+        },
+        {
+          "name": "Triceps Stretch",
+          "description": "A stretch that lengthens the triceps and improves shoulder mobility."
+        }
+      ]
+    },
+    {
+      "name": "Endurance",
+      "exercises": [
+        {
+          "name": "Cycling",
+          "description": "A low-impact exercise that improves cardiovascular endurance by pedaling a bicycle."
+        },
+        {
+          "name": "Swimming",
+          "description": "A full-body workout that increases stamina by moving through water."
+        },
+        {
+          "name": "Rowing",
+          "description": "A cardio exercise that builds endurance by simulating rowing."
+        },
+        {
+          "name": "Long-Distance Running",
+          "description": "Running over extended distances to build endurance."
+        },
+        {
+          "name": "Hiking",
+          "description": "Walking long distances on trails to build endurance and strength."
+        }
+      ]
+    },
+    {
+      "name": "Balance",
+      "exercises": [
+        {
+          "name": "Single-Leg Stand",
+          "description": "A balance exercise that involves standing on one leg to improve stability."
+        },
+        {
+          "name": "Tree Pose",
+          "description": "A yoga pose where one foot is placed on the inner thigh of the opposite leg to improve balance."
+        },
+        {
+          "name": "Bosu Ball Squats",
+          "description": "Squats performed on an unstable surface to challenge balance."
+        },
+        {
+          "name": "Tightrope Walk",
+          "description": "Walking heel-to-toe on a line to improve coordination and balance."
+        },
+        {
+          "name": "Heel Raises",
+          "description": "A simple exercise that improves ankle stability and balance."
+        }
+      ]
+    },
+    {
+      "name": "Speed",
+      "exercises": [
+        {
+          "name": "Sprints",
+          "description": "Short bursts of running at maximum speed to improve overall velocity."
+        },
+        {
+          "name": "High Knees",
+          "description": "A cardio exercise where you rapidly raise your knees to chest level, improving agility and speed."
+        },
+        {
+          "name": "Suicides",
+          "description": "A drill where you run to different points and back to improve speed."
+        },
+        {
+          "name": "Cone Drills",
+          "description": "Speed drills involving running between cones in different patterns."
+        },
+        {
+          "name": "Bounding",
+          "description": "A plyometric exercise that emphasizes speed and power in running."
+        }
+      ]
+    },
+    {
+      "name": "Mobility",
+      "exercises": [
+        {
+          "name": "Hip Circles",
+          "description": "A movement that increases mobility in the hips by rotating them in a circular motion."
+        },
+        {
+          "name": "Arm Swings",
+          "description": "A dynamic warm-up exercise to increase shoulder and arm mobility."
+        },
+        {
+          "name": "World's Greatest Stretch",
+          "description": "A full-body stretch that improves mobility in multiple areas."
+        },
+        {
+          "name": "Ankle Rolls",
+          "description": "A mobility exercise that improves ankle flexibility and reduces stiffness."
+        },
+        {
+          "name": "Spinal Twists",
+          "description": "A stretch that enhances mobility in the spine."
+        }
+      ]
+    },
+    {
+      "name": "Coordination",
+      "exercises": [
+        {
+          "name": "Jump Rope",
+          "description": "An exercise that improves coordination by jumping over a rotating rope."
+        },
+        {
+          "name": "Ladder Drills",
+          "description": "A speed and coordination drill involving quick foot movements through a ladder pattern on the ground."
+        },
+        {
+          "name": "Juggling",
+          "description": "A skill-based activity that challenges hand-eye coordination."
+        },
+        {
+          "name": "Ball Toss Drills",
+          "description": "Exercises where you toss and catch a ball with a partner to improve coordination."
+        },
+        {
+          "name": "Balance Beam Walk",
+          "description": "Walking on a narrow surface to improve coordination and balance."
+        }
+      ]
+    },
+    {
+      "name": "Power",
+      "exercises": [
+        {
+          "name": "Box Jumps",
+          "description": "An explosive movement where you jump onto a box, improving lower body power."
+        },
+        {
+          "name": "Medicine Ball Slams",
+          "description": "A dynamic exercise where you slam a weighted ball to the ground, building upper body power."
+        },
+        {
+          "name": "Kettlebell Swings",
+          "description": "An explosive exercise that builds power in the hips and lower back."
+        },
+        {
+          "name": "Power Cleans",
+          "description": "A weightlifting move that builds full-body power."
+        },
+        {
+          "name": "Broad Jumps",
+          "description": "A plyometric exercise that enhances leg power by jumping forward."
+        }
+      ]
+    },
+    {
+      "name": "Stability",
+      "exercises": [
+        {
+          "name": "Planks",
+          "description": "An isometric core exercise that enhances stability by holding a push-up position."
+        },
+        {
+          "name": "Side Planks",
+          "description": "A variation of the plank that focuses on strengthening the obliques and improving lateral stability."
+        },
+        {
+          "name": "Bird Dogs",
+          "description": "A core exercise that promotes stability by extending one arm and the opposite leg."
+        },
+        {
+          "name": "Pallof Press",
+          "description": "An anti-rotation exercise that enhances core stability."
+        },
+        {
+          "name": "Glute Bridge",
+          "description": "An exercise that strengthens the glutes and promotes hip stability."
+        }
+      ]
+    }
+  ]
+}
