@@ -1,8 +1,11 @@
+import uuid
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
 class ExerciseCategory(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
 
     class Meta:
@@ -14,6 +17,7 @@ class ExerciseCategory(models.Model):
 
 
 class Exercise(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=150)
     description = models.TextField(blank=True)
     category = models.ForeignKey(

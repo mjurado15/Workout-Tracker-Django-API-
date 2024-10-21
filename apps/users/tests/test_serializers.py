@@ -1,3 +1,5 @@
+import uuid
+
 import pytest
 from django_mock_queries.query import MockModel
 from rest_framework.exceptions import AuthenticationFailed
@@ -19,7 +21,7 @@ class TestUserSerializer:
 
     def test_serialize_model(self, user_built):
         user_data = {
-            "id": 1,
+            "id": uuid.uuid4(),
             "email": user_built.email,
             "first_name": user_built.first_name,
             "last_name": user_built.last_name,
@@ -27,7 +29,9 @@ class TestUserSerializer:
         user = MockModel(**user_data)
         serializer = UserSerializer(user)
 
-        assert serializer.data == user_data
+        expected_data = {**user_data, "id": str(user_data["id"])}
+
+        assert serializer.data == expected_data
 
     def test_valid_data(self, user_built):
         user_data = {
@@ -67,7 +71,7 @@ class TestSignupSerializer:
 
     def test_serialize_model(self, user_built):
         user_data = {
-            "id": 1,
+            "id": uuid.uuid4(),
             "email": user_built.email,
             "first_name": user_built.first_name,
             "last_name": user_built.last_name,
@@ -75,7 +79,9 @@ class TestSignupSerializer:
         user = MockModel(**user_data)
         serializer = SignupSerializer(user)
 
-        assert serializer.data == user_data
+        expected_data = {**user_data, "id": str(user_data["id"])}
+
+        assert serializer.data == expected_data
 
     def test_valid_data(self, user_built):
         user_data = {

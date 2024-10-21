@@ -48,7 +48,7 @@ class TestLoginView:
         assert response.status_code == 200
         assert set(response.data.keys()) == {"access", "refresh", "user"}
         assert response.data["user"] == {
-            "id": user_created.id,
+            "id": str(user_created.id),
             "email": user_created.email,
             "first_name": user_created.first_name,
             "last_name": user_created.last_name,
