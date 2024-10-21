@@ -1,7 +1,10 @@
 import json
 import pytest
+from rest_framework.test import APIClient
 
-from .factories import ExerciseCategoryFactory
+from users.tests.factories import UserFactory
+
+from .factories import ExerciseCategoryFactory, ExerciseFactory
 
 
 @pytest.fixture
@@ -42,5 +45,47 @@ def mock_open_seed_data(mocker, seed_data):
 
 
 @pytest.fixture
+def api_client():
+    return APIClient()
+
+
+@pytest.fixture
+def user_created():
+    return UserFactory.create()
+
+
+@pytest.fixture
 def exercise_category_created():
     return ExerciseCategoryFactory.create()
+
+
+@pytest.fixture
+def create_exercise_category_with():
+    def create_exercise_category(**kwargs):
+        return ExerciseCategoryFactory.create(**kwargs)
+
+    return create_exercise_category
+
+
+@pytest.fixture
+def create_batch_exercise_categories():
+    def create_exercise_categories(size):
+        return ExerciseCategoryFactory.create_batch(size)
+
+    return create_exercise_categories
+
+
+@pytest.fixture
+def create_exercise_with():
+    def create_exercise(**kwargs):
+        return ExerciseFactory.create(**kwargs)
+
+    return create_exercise
+
+
+@pytest.fixture
+def create_batch_exercises_with():
+    def create_exercises(size, **kwargs):
+        return ExerciseFactory.create_batch(size, **kwargs)
+
+    return create_exercises
