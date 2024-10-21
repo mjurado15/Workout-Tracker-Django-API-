@@ -4,7 +4,7 @@ from rest_framework.test import APIClient
 
 from users.tests.factories import UserFactory
 
-from .factories import ExerciseCategoryFactory, ExerciseFactory
+from .factories import ExerciseCategoryFactory, ExerciseFactory, WorkoutFactory
 
 
 @pytest.fixture
@@ -76,6 +76,11 @@ def create_batch_exercise_categories():
 
 
 @pytest.fixture
+def exercise_created():
+    return ExerciseFactory.create()
+
+
+@pytest.fixture
 def create_exercise_with():
     def create_exercise(**kwargs):
         return ExerciseFactory.create(**kwargs)
@@ -89,3 +94,8 @@ def create_batch_exercises_with():
         return ExerciseFactory.create_batch(size, **kwargs)
 
     return create_exercises
+
+
+@pytest.fixture
+def workout_created():
+    return WorkoutFactory.create()
