@@ -45,3 +45,14 @@ class WorkoutSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data["user"] = self.context["request"].user
         return super().create(validated_data)
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.WorkoutComment
+        fields = "__all__"
+        read_only_fields = ["workout", "created_at", "updated_at"]
+
+    def create(self, validated_data):
+        validated_data["workout"] = self.context["workout"]
+        return super().create(validated_data)
