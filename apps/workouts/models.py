@@ -112,7 +112,7 @@ class ScheduledWorkoutDate(models.Model):
         return f"{self.workout.name} - {self.date} {self.time}"
 
 
-class RecurringWorkoutDays(models.Model):
+class RecurringWorkoutAlert(models.Model):
     WEEK_DAYS = [
         (0, "Monday"),
         (1, "Tuesday"),
@@ -131,7 +131,7 @@ class RecurringWorkoutDays(models.Model):
     activated = models.BooleanField(default=False)
 
     workout = models.ForeignKey(
-        Workout, on_delete=models.CASCADE, related_name="recurring_days"
+        Workout, on_delete=models.CASCADE, related_name="recurring_alerts"
     )
 
     def __str__(self):

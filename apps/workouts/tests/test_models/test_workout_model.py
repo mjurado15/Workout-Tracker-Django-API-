@@ -127,11 +127,11 @@ class TestWorkoutModel:
             "type": Workout.RECURRENT,
         }
         workout = Workout.objects.create(**workout_data)
-        workout.recurring_days.create(workout=workout, time=timezone.now().time())
+        workout.recurring_alerts.create(workout=workout, time=timezone.now().time())
 
         assert not workout.is_scheduled()
-        assert workout.recurring_days.count() == 1
+        assert workout.recurring_alerts.count() == 1
         workout.switch_to_scheduled()
 
         assert workout.is_scheduled()
-        assert workout.recurring_days.count() == 0
+        assert workout.recurring_alerts.count() == 0
