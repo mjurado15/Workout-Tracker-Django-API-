@@ -69,8 +69,82 @@ class Workout(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    SCHEDULED = "S"
+    RECURRENT = "R"
+
+    WORKOUT_TYPE = [
+        (SCHEDULED, "scheduled"),
+        (RECURRENT, "recurrent"),
+    ]
+
+    type = models.CharField(max_length=10, choices=WORKOUT_TYPE, blank=True)
+
     def __str__(self):
         return f"{self.name} ({self.user})"
+
+    def is_recurrent(self):
+        return self.type == self.RECURRENT
+
+    def is_scheduled(self):
+        return self.type == self.SCHEDULED
+
+    def switch_to_recurrent(self):
+        self.type = self.RECURRENT
+        self.save()
+        self.scheduled_dates.all().delete()
+
+    def switch_to_scheduled(self):
+        self.type = self.SCHEDULED
+        self.save()
+        self.recurring_days.all().delete()
+
+
+class ScheduledWorkoutDate(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    date = models.DateField()
+    time = models.TimeField()
+
+    workout = models.ForeignKey(
+        Workout, on_delete=models.CASCADE, related_name="scheduled_dates"
+    )
+
+    def __str__(self):
+        return f"{self.workout.name} - {self.date} {self.time}"
+
+
+class RecurringWorkoutDays(models.Model):
+    WEEK_DAYS = [
+        (0, "Monday"),
+        (1, "Tuesday"),
+        (2, "Wednesday"),
+        (3, "Thursday"),
+        (4, "Friday"),
+        (5, "Saturday"),
+        (6, "Sunday"),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    time = models.TimeField()
+    week_days = models.JSONField(
+        default=list, blank=True
+    )  # List of days of the week (0-6)
+    activated = models.BooleanField(default=False)
+
+    workout = models.ForeignKey(
+        Workout, on_delete=models.CASCADE, related_name="recurring_days"
+    )
+
+    def __str__(self):
+        return f"{self.workout.name} - {self.get_week_days_display()} {self.time}"
+
+    def get_week_days_display(self):
+        if not self.week_days:
+            return "No set days"
+        return ", ".join([dict(self.WEEK_DAYS).get(day, "") for day in self.week_days])
+
+    def activate(self):
+        self.activated = True
+        self.save()
 
 
 class WorkoutComment(models.Model):
