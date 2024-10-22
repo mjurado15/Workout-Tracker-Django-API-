@@ -64,7 +64,7 @@ class TestWorkoutModel:
             "name": "Test Workout",
             "user": user_created,
         }
-        workout = Workout.objects.create(**workout_data)
+        Workout.objects.create(**workout_data)
 
         assert Workout.objects.count() == 1
         user_created.delete()

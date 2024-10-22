@@ -6,6 +6,7 @@ from .factories import (
     ExerciseFactory,
     WorkoutFactory,
     ExercisePlanFactory,
+    WorkoutCommentFactory,
 )
 
 
@@ -115,7 +116,7 @@ def exercise_plan_created():
 
 
 @pytest.fixture
-def create_exercise_plans_with():
+def create_exercise_plan_with():
     def create_exercise_plan_with(**kwargs):
         return ExercisePlanFactory.create(**kwargs)
 
@@ -126,5 +127,26 @@ def create_exercise_plans_with():
 def create_batch_exercise_plans_with():
     def create_batch_with(size, **kwargs):
         return ExercisePlanFactory.create_batch(size, **kwargs)
+
+    return create_batch_with
+
+
+@pytest.fixture
+def comment_created():
+    return WorkoutCommentFactory.create()
+
+
+@pytest.fixture
+def create_comment_with():
+    def comment_with(**kwargs):
+        return WorkoutCommentFactory.create(**kwargs)
+
+    return comment_with
+
+
+@pytest.fixture
+def create_batch_comments_with():
+    def create_batch_with(size, **kwargs):
+        return WorkoutCommentFactory.create_batch(size, **kwargs)
 
     return create_batch_with

@@ -41,18 +41,18 @@ class TestListExercisePlanView(ParentExercisePlanView):
         api_client,
         create_batch_workouts_with,
         create_batch_exercise_plans_with,
-        create_exercise_plans_with,
+        create_exercise_plan_with,
         list_response_keys,
     ):
         [target_workout, other_workout] = create_batch_workouts_with(size=2)
         create_batch_exercise_plans_with(size=2, workout=other_workout)
-        exercise_plan_1 = create_exercise_plans_with(
+        exercise_plan_1 = create_exercise_plan_with(
             name="Weighted squats", workout=target_workout
         )
-        exercise_plan_2 = create_exercise_plans_with(
+        exercise_plan_2 = create_exercise_plan_with(
             name="intense running", workout=target_workout
         )
-        exercise_plan_3 = create_exercise_plans_with(
+        exercise_plan_3 = create_exercise_plan_with(
             name="intense running", workout=target_workout
         )
 
@@ -259,6 +259,26 @@ class TestCreateExercisePlanView(ParentExercisePlanView):
 
         assert response.json() != {}
 
+    def test_create_fails_if_workout_not_exist(
+        self, api_client, exercise_created, user_created
+    ):
+        workout_id = str(uuid.uuid4())
+        exercise_plan_data = {
+            "name": "Test Exercise Plan",
+            "description": "This is a test description",
+            "exercise": str(exercise_created.id),
+        }
+
+        api_client.force_authenticate(user=user_created)
+        response = api_client.post(
+            f"{self.url}{workout_id}/{self.exercise_plans_url}",
+            exercise_plan_data,
+            format="json",
+        )
+
+        assert response.status_code == 404
+        assert response.json()["detail"] == "No Workout matches the given query."
+
     def test_unauthenticate_user_cannot_create_exercise_plan(
         self, api_client, workout_created
     ):
@@ -378,7 +398,7 @@ class TestPartialUpdateExercisePlanView(ParentExercisePlanView):
         assert response.status_code == 404
         assert response.json()["detail"] == "No Workout matches the given query."
 
-    def test_partial_update_workout_not_fail_with_incomplete_data(
+    def test_partial_update_exercise_plan_not_fail_with_incomplete_data(
         self, api_client, exercise_plan_created
     ):
         workout = exercise_plan_created.workout
@@ -481,7 +501,7 @@ class TestDeleteExercisePlanView(ParentExercisePlanView):
         assert response.status_code == 404
         assert response.json()["detail"] == "No Workout matches the given query."
 
-    def test_user_cannot_delete_exercise_plan_workout_that_not_exist(
+    def test_user_cannot_delete_exercise_plan_of_workout_that_not_exist(
         self, api_client, user_created
     ):
         workout_id = str(uuid.uuid4())
