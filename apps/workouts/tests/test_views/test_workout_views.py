@@ -14,14 +14,14 @@ class ParentWorkoutView:
     url = reverse("workouts-list")
 
     def create_expected_workout(self, workout):
-        workout_dict = {**workout.__dict__}
-        workout_dict.pop("_state")
-        workout_dict.pop("user_id")
-
-        workout_dict["id"] = str(workout_dict["id"])
-        workout_dict["user"] = str(workout.user.id)
-        workout_dict["created_at"] = serialize_datetime(workout_dict["created_at"])
-        workout_dict["updated_at"] = serialize_datetime(workout_dict["updated_at"])
+        workout_dict = {
+            "id": str(workout.id),
+            "name": workout.name,
+            "description": workout.description,
+            "user": str(workout.user.id),
+            "created_at": serialize_datetime(workout.created_at),
+            "updated_at": serialize_datetime(workout.updated_at),
+        }
 
         return workout_dict
 

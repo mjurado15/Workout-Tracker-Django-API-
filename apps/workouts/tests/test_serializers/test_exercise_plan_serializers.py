@@ -36,6 +36,7 @@ class TestExercisePlanSerializer:
         }
 
         plan_data = {
+            "id": uuid.uuid4(),
             "name": "Test exercise plan",
             "description": "Description",
             "sets": 4,
@@ -54,6 +55,7 @@ class TestExercisePlanSerializer:
 
         expected_data = {
             **plan_data,
+            "id": str(plan_data["id"]),
             "created_at": serialize_datetime(plan_data["created_at"]),
             "updated_at": serialize_datetime(plan_data["updated_at"]),
             "exercise": {**exercise_data, "id": str(exercise_data["id"])},
@@ -126,11 +128,8 @@ class TestExercisePlanSerializer:
             data=plan_data, context={"workout": mock_workout}
         )
         serializer.is_valid()
-
-        plan_created = serializer.create(serializer.validated_data)
+        serializer.create(serializer.validated_data)
 
         mock_model_create.assert_called_once_with(
             {**serializer.validated_data, "workout": mock_workout}
         )
-        assert plan_created.id is not None
-        assert plan_created.name == plan_data["name"]

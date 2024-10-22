@@ -16,21 +16,19 @@ class ParentExercisePlanView:
     exercise_plans_url = "exercise_plans/"
 
     def create_expected_exercise_plan(self, exercise_plan):
-        exercise_plan_dict = {**exercise_plan.__dict__}
-        exercise_plan_dict.pop("_state")
-        exercise_plan_dict.pop("exercise_id")
-        exercise_plan_dict.pop("workout_id")
-
-        exercise_plan_dict["id"] = str(exercise_plan_dict["id"])
-        exercise_plan_dict["created_at"] = serialize_datetime(
-            exercise_plan_dict["created_at"]
-        )
-        exercise_plan_dict["updated_at"] = serialize_datetime(
-            exercise_plan_dict["updated_at"]
-        )
-
-        exercise_plan_dict["exercise"] = ExerciseSerializer(exercise_plan.exercise).data
-        exercise_plan_dict["workout"] = str(exercise_plan.workout.id)
+        exercise_plan_dict = {
+            "id": str(exercise_plan.id),
+            "name": exercise_plan.name,
+            "description": exercise_plan.description,
+            "sets": exercise_plan.sets,
+            "reps": exercise_plan.reps,
+            "weight": exercise_plan.weight,
+            "weight_measure_unit": exercise_plan.weight_measure_unit,
+            "created_at": serialize_datetime(exercise_plan.created_at),
+            "updated_at": serialize_datetime(exercise_plan.updated_at),
+            "workout": str(exercise_plan.workout.id),
+            "exercise": ExerciseSerializer(exercise_plan.exercise).data,
+        }
 
         return exercise_plan_dict
 
