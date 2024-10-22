@@ -1,10 +1,12 @@
 import json
 import pytest
-from rest_framework.test import APIClient
 
-from users.tests.factories import UserFactory
-
-from .factories import ExerciseCategoryFactory, ExerciseFactory, WorkoutFactory
+from .factories import (
+    ExerciseCategoryFactory,
+    ExerciseFactory,
+    WorkoutFactory,
+    ExercisePlanFactory,
+)
 
 
 @pytest.fixture
@@ -42,16 +44,6 @@ def mock_open_seed_data(mocker, seed_data):
     mock_open = mocker.mock_open(read_data=json.dumps(seed_data))
     mocker.patch("builtins.open", mock_open)
     return mock_open
-
-
-@pytest.fixture
-def api_client():
-    return APIClient()
-
-
-@pytest.fixture
-def user_created():
-    return UserFactory.create()
 
 
 @pytest.fixture
@@ -99,3 +91,40 @@ def create_batch_exercises_with():
 @pytest.fixture
 def workout_created():
     return WorkoutFactory.create()
+
+
+@pytest.fixture
+def create_workout_with():
+    def create_workout(**kwargs):
+        return WorkoutFactory.create(**kwargs)
+
+    return create_workout
+
+
+@pytest.fixture
+def create_batch_workouts_with():
+    def create_workouts_with(size, **kwargs):
+        return WorkoutFactory.create_batch(size, **kwargs)
+
+    return create_workouts_with
+
+
+@pytest.fixture
+def exercise_plan_created():
+    return ExercisePlanFactory.create()
+
+
+@pytest.fixture
+def create_exercise_plans_with():
+    def create_exercise_plan_with(**kwargs):
+        return ExercisePlanFactory.create(**kwargs)
+
+    return create_exercise_plan_with
+
+
+@pytest.fixture
+def create_batch_exercise_plans_with():
+    def create_batch_with(size, **kwargs):
+        return ExercisePlanFactory.create_batch(size, **kwargs)
+
+    return create_batch_with

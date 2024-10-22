@@ -28,3 +28,15 @@ class WorkoutFactory(DjangoModelFactory):
     name = factory.Faker("sentence", nb_words=3)
     description = factory.Faker("sentence", nb_words=10)
     user = factory.SubFactory("users.tests.factories.UserFactory")
+
+
+class ExercisePlanFactory(DjangoModelFactory):
+    class Meta:
+        model = models.ExercisePlan
+
+    name = factory.Faker("sentence", nb_words=3)
+    description = factory.Faker("sentence", nb_words=10)
+    sets = factory.Faker("pyint", min_value=0, max_value=10)
+    reps = factory.Faker("pyint", min_value=10, max_value=30)
+    exercise = factory.SubFactory(ExerciseFactory)
+    workout = factory.SubFactory(WorkoutFactory)
