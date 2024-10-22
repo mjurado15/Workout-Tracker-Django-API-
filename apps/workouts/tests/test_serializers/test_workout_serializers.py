@@ -26,6 +26,7 @@ class TestWorkoutSerializer:
             "user": mock_user,
             "created_at": timezone.now(),
             "updated_at": timezone.now(),
+            "type": "S",
         }
         mock_workout = MockModel(**workout_data)
         mock_workout.serializable_value = lambda field_name: getattr(

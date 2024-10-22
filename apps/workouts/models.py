@@ -96,7 +96,7 @@ class Workout(models.Model):
     def switch_to_scheduled(self):
         self.type = self.SCHEDULED
         self.save()
-        self.recurring_days.all().delete()
+        self.recurring_alerts.all().delete()
 
 
 class ScheduledWorkoutDate(models.Model):

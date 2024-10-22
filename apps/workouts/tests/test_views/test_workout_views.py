@@ -18,6 +18,7 @@ class ParentWorkoutView:
             "id": str(workout.id),
             "name": workout.name,
             "description": workout.description,
+            "type": workout.type,
             "user": str(workout.user.id),
             "created_at": serialize_datetime(workout.created_at),
             "updated_at": serialize_datetime(workout.updated_at),

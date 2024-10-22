@@ -40,7 +40,7 @@ class WorkoutSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Workout
         fields = "__all__"
-        read_only_fields = ["user", "created_at", "updated_at"]
+        read_only_fields = ["type", "user", "created_at", "updated_at"]
 
     def create(self, validated_data):
         validated_data["user"] = self.context["request"].user

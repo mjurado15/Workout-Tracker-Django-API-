@@ -15,15 +15,13 @@ class ParentWorkoutCommentView:
     comments_url = "comments/"
 
     def create_expected_comment(self, comment):
-        comment_dict = {**comment.__dict__}
-        comment_dict.pop("_state")
-        comment_dict.pop("workout_id")
-
-        comment_dict["id"] = str(comment_dict["id"])
-        comment_dict["created_at"] = serialize_datetime(comment_dict["created_at"])
-        comment_dict["updated_at"] = serialize_datetime(comment_dict["updated_at"])
-
-        comment_dict["workout"] = str(comment.workout.id)
+        comment_dict = {
+            "id": str(comment.id),
+            "comment": comment.comment,
+            "workout": str(comment.workout.id),
+            "created_at": serialize_datetime(comment.created_at),
+            "updated_at": serialize_datetime(comment.updated_at),
+        }
 
         return comment_dict
 
@@ -185,10 +183,10 @@ class TestRetrieveCommentView(ParentWorkoutCommentView):
         self, api_client, comment_created
     ):
         workout_id = str(comment_created.workout.id)
-        exercise_plan_id = str(comment_created.id)
+        commend_id = str(comment_created.id)
 
         response = api_client.get(
-            f"{self.url}{workout_id}/{self.comments_url}{exercise_plan_id}/",
+            f"{self.url}{workout_id}/{self.comments_url}{commend_id}/",
             format="json",
         )
 
@@ -325,14 +323,14 @@ class TestPartialUpdateCommentView(ParentWorkoutCommentView):
         assert response.json()["detail"] == "No WorkoutComment matches the given query."
 
     def test_user_cannot_partial_update_comment_of_another_user_s_workout(
-        self, api_client, user_created, exercise_plan_created
+        self, api_client, user_created, comment_created
     ):
         authenticated_user = user_created
 
-        workout = exercise_plan_created.workout
+        workout = comment_created.workout
         workout_id = str(workout.id)
 
-        old_comment = exercise_plan_created
+        old_comment = comment_created
         comment_id = str(old_comment.id)
 
         new_data = {"comment": "This is a new comment"}
