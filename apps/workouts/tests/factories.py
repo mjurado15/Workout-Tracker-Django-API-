@@ -1,3 +1,5 @@
+import random
+
 import factory
 from factory.django import DjangoModelFactory
 
@@ -47,4 +49,22 @@ class WorkoutCommentFactory(DjangoModelFactory):
         model = models.WorkoutComment
 
     comment = factory.Faker("sentence", nb_words=10)
+    workout = factory.SubFactory(WorkoutFactory)
+
+
+class ScheduledDateFactory(DjangoModelFactory):
+    class Meta:
+        model = models.ScheduledWorkoutDate
+
+    date = factory.Faker("date_this_month", before_today=False, after_today=True)
+    time = factory.Faker("time_object")
+    workout = factory.SubFactory(WorkoutFactory)
+
+
+class RecurringAlertFactory(DjangoModelFactory):
+    class Meta:
+        model = models.RecurringWorkoutAlert
+
+    time = factory.Faker("time_object")
+    week_days = random.sample(range(7), random.randint(0, 7))
     workout = factory.SubFactory(WorkoutFactory)

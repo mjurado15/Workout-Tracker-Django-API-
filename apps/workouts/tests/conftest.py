@@ -7,6 +7,8 @@ from .factories import (
     WorkoutFactory,
     ExercisePlanFactory,
     WorkoutCommentFactory,
+    ScheduledDateFactory,
+    RecurringAlertFactory,
 )
 
 
@@ -148,5 +150,57 @@ def create_comment_with():
 def create_batch_comments_with():
     def create_batch_with(size, **kwargs):
         return WorkoutCommentFactory.create_batch(size, **kwargs)
+
+    return create_batch_with
+
+
+@pytest.fixture
+def scheduled_date_built():
+    return ScheduledDateFactory.build()
+
+
+@pytest.fixture
+def scheduled_date_created():
+    return ScheduledDateFactory.create()
+
+
+@pytest.fixture
+def create_scheduled_date_with():
+    def scheduled_date_with(**kwargs):
+        return ScheduledDateFactory.create(**kwargs)
+
+    return scheduled_date_with
+
+
+@pytest.fixture
+def create_batch_scheduled_dates_with():
+    def create_batch_with(size, **kwargs):
+        return ScheduledDateFactory.create_batch(size, **kwargs)
+
+    return create_batch_with
+
+
+@pytest.fixture
+def recurring_alert_built():
+    return RecurringAlertFactory.build()
+
+
+@pytest.fixture
+def recurring_alert_created():
+    return RecurringAlertFactory.create()
+
+
+@pytest.fixture
+def create_recurring_alert_with():
+    def recurring_alert_with(**kwargs):
+        return RecurringAlertFactory.create(**kwargs)
+
+    return recurring_alert_with
+
+
+@pytest.fixture
+def create_batch_recurring_alerts_with():
+    def create_batch_with(size, **kwargs):
+        return RecurringAlertFactory.create_batch(size, **kwargs)
 
     return create_batch_with
