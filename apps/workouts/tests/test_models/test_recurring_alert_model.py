@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import pytest
 from django.utils import timezone
 
@@ -115,3 +117,31 @@ class TestRecurringWorkoutAlertModel:
         recurring_alert.activate()
 
         assert recurring_alert.activated
+
+    def test_deactivate__when_time_is_updated_by_one_greater_than_current_time(
+        self, workout_created
+    ):
+        week_days = [0, 1, 4]
+        time = (timezone.now() - timedelta(hours=1)).time()
+        alert_data = {
+            "time": time,
+            "week_days": week_days,
+            "workout": workout_created,
+            "activated": True,
+        }
+        recurring_alert = RecurringWorkoutAlert.objects.create(**alert_data)
+        assert recurring_alert.activated
+
+        # time is not updated
+        recurring_alert.save()
+        assert recurring_alert.activated
+
+        # The time is updated to a time less than the current one
+        recurring_alert.time = (timezone.now() - timedelta(minutes=20)).time()
+        recurring_alert.save()
+        assert recurring_alert.activated
+
+        # The time is updated to a time later than the current one
+        recurring_alert.time = (timezone.now() + timedelta(minutes=30)).time()
+        recurring_alert.save()
+        assert not recurring_alert.activated

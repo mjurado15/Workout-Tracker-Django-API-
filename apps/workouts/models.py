@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from users.models import User
@@ -156,6 +157,15 @@ class RecurringWorkoutAlert(models.Model):
     def activate(self):
         self.activated = True
         self.save()
+
+    def save(self, *args, **kwargs):
+        previous = RecurringWorkoutAlert.objects.filter(id=self.id).first()
+        if previous:
+            current_time = timezone.now().time()
+            if self.time >= current_time:
+                self.activated = False
+
+        return super().save(*args, **kwargs)
 
 
 class WorkoutComment(models.Model):
