@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.utils import timezone
 
 from . import models
 
@@ -63,6 +64,15 @@ class ScheduledDateSerializer(serializers.ModelSerializer):
         model = models.ScheduledWorkoutDate
         exclude = ["activated"]
         read_only_fields = ["workout"]
+
+    def validate_datetime(self, value):
+        current_date = timezone.now()
+        if value < current_date:
+            raise serializers.ValidationError(
+                "Cannot be earlier than the current date."
+            )
+
+        return value
 
     def create(self, validated_data):
         validated_data["workout"] = self.context["workout"]

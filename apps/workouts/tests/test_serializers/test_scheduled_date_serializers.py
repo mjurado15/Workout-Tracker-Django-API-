@@ -1,4 +1,5 @@
 import uuid
+from datetime import timedelta
 from django.utils import timezone
 
 import pytest
@@ -33,9 +34,22 @@ class TestScheduledDateSerializer:
         }
         assert serializer.data == expected_data
 
+    def test_validate_datetime__must_be_a_later_date(self):
+        scheduled_data = {
+            "datetime": str(timezone.now() - timedelta(days=1, hours=3)),
+        }
+
+        serializer = ScheduledDateSerializer(data=scheduled_data)
+
+        assert not serializer.is_valid()
+        assert (
+            str(serializer.errors["datetime"][0])
+            == "Cannot be earlier than the current date."
+        )
+
     def test_valid_data(self):
         scheduled_data = {
-            "datetime": "2024-03-12 19:30:00",
+            "datetime": str(timezone.now() + timedelta(days=1)),
         }
         serializer = ScheduledDateSerializer(data=scheduled_data)
 
@@ -53,7 +67,7 @@ class TestScheduledDateSerializer:
         mock_workout = MockModel(id=uuid.uuid4())
 
         scheduled_data = {
-            "datetime": "2024-03-12 19:30:00",
+            "datetime": str(timezone.now() + timedelta(days=1)),
         }
         mock_modelserializer_create = mocker.patch(
             "workouts.serializers.serializers.ModelSerializer.create",
