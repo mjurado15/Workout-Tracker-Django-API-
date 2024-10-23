@@ -9,9 +9,10 @@ Below, you'll find the **requirements**, **installation instructions**, **testin
 Before starting, ensure you have the following tools installed:
 
 - **Python 3.10+**
-- **pip (Python package manager)**
-- **Virtualenv (optional, recommended for virtual environments)**
+- **pip** (Python package manager)
+- **Virtualenv** (optional, recommended for virtual environments)
 - **PostgreSQL**
+- **Redis or RabbitMQ** (as the message broker for Celery)
 
 ### Dependencies
 
@@ -20,6 +21,7 @@ The main dependencies are listed in the `requirements.txt` file, including:
 - Django Rest Framework
 - pytest + plugins for testing
 - psycopg3 (for PostgreSQL support)
+- Celery
 - Other packages as needed for specific functionality
 
 ## Instalation
@@ -84,6 +86,25 @@ python manage.py runserver
 ```
 
 The app will be available at http://localhost:8000.
+
+## Running Celery
+
+To run Celery, open a new terminal window and navigate to your project directory, then execute the following command:
+
+```bash
+celery -A workout_tracker worker --loglevel=INFO
+```
+Workout_tracker is the name of the Django application
+
+### Running Celery Beat
+
+To run Celery Beat, which is used for scheduling tasks, open another terminal window and execute:
+
+```bash
+celery -A workout_tracker beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+```
+
+This will start the scheduler that sends tasks to the Celery worker based on the schedule you define in your Django application.
 
 ## Testing
 
