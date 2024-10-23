@@ -111,6 +111,17 @@ class ScheduledWorkoutDate(models.Model):
     def __str__(self):
         return f"{self.workout.name} - {self.datetime}"
 
+    def activate(self):
+        self.activated = True
+        self.save()
+
+    def save(self, *args, **kwargs):
+        previous = ScheduledWorkoutDate.objects.filter(id=self.id).first()
+        if previous and previous.datetime != self.datetime:
+            self.activated = False
+
+        return super().save(*args, **kwargs)
+
 
 class RecurringWorkoutAlert(models.Model):
     WEEK_DAYS = [
