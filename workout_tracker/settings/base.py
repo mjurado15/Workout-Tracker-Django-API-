@@ -52,6 +52,7 @@ LOCAL_APPS = [
 THIRD_APPS = [
     "rest_framework",
     "corsheaders",
+    "django_celery_beat",
 ]
 
 INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
@@ -162,3 +163,12 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "workout_tracker.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
 }
+
+# Celery configs
+CELERY_BROKER_URL = env.str("CELERY_BROKER_URL")
+
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+CELERY_BROKER_CONNECTION_RETRY = True
+CELERY_BROKER_CONNECTION_MAX_RETRIES = 5
+CELERY_BROKER_CONNECTION_RETRY_INTERVAL = 2.0
