@@ -34,16 +34,6 @@ class TestScheduledWorkoutDateModel:
             == f"{scheduled_date.workout.name} - {scheduled_date.datetime}"
         )
 
-    def test_create_scheduled_default_values(self, workout_created):
-        date_data = {
-            "datetime": timezone.now(),
-            "workout": workout_created,
-        }
-        scheduled_date = ScheduledWorkoutDate.objects.create(**date_data)
-
-        assert scheduled_date.id is not None
-        assert not scheduled_date.activated
-
     def test_scheduled_date_workout_relationship(self, workout_created):
         date_data = {
             "datetime": timezone.now(),
@@ -65,33 +55,3 @@ class TestScheduledWorkoutDateModel:
         workout_created.delete()
 
         assert ScheduledWorkoutDate.objects.count() == 0
-
-    def test_activate_method(self, workout_created):
-        data = {
-            "datetime": timezone.now(),
-            "workout": workout_created,
-        }
-        scheduled_date = ScheduledWorkoutDate.objects.create(**data)
-
-        assert not scheduled_date.activated
-        scheduled_date.activate()
-
-        assert scheduled_date.activated
-
-    def test_deactivate_deactivate_when_datetime_is_updated(self, workout_created):
-        data = {
-            "datetime": timezone.now(),
-            "workout": workout_created,
-            "activated": True,
-        }
-        scheduled_date = ScheduledWorkoutDate.objects.create(**data)
-        assert scheduled_date.activated
-
-        # datetime is not updated
-        scheduled_date.save()
-        assert scheduled_date.activated
-
-        # datetime is updated
-        scheduled_date.datetime = timezone.now()
-        scheduled_date.save()
-        assert not scheduled_date.activated

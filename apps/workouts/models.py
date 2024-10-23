@@ -103,7 +103,6 @@ class Workout(models.Model):
 class ScheduledWorkoutDate(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     datetime = models.DateTimeField()
-    activated = models.BooleanField(default=False)
 
     workout = models.ForeignKey(
         Workout, on_delete=models.CASCADE, related_name="scheduled_dates"
@@ -111,17 +110,6 @@ class ScheduledWorkoutDate(models.Model):
 
     def __str__(self):
         return f"{self.workout.name} - {self.datetime}"
-
-    def activate(self):
-        self.activated = True
-        self.save()
-
-    def save(self, *args, **kwargs):
-        previous = ScheduledWorkoutDate.objects.filter(id=self.id).first()
-        if previous and previous.datetime != self.datetime:
-            self.activated = False
-
-        return super().save(*args, **kwargs)
 
 
 class RecurringWorkoutAlert(models.Model):
@@ -140,7 +128,6 @@ class RecurringWorkoutAlert(models.Model):
     week_days = models.JSONField(
         default=list, blank=True
     )  # List of days of the week (0-6)
-    activated = models.BooleanField(default=False)
 
     workout = models.ForeignKey(
         Workout, on_delete=models.CASCADE, related_name="recurring_alerts"
@@ -153,19 +140,6 @@ class RecurringWorkoutAlert(models.Model):
         if not self.week_days:
             return "No set days"
         return ", ".join([dict(self.WEEK_DAYS).get(day, "") for day in self.week_days])
-
-    def activate(self):
-        self.activated = True
-        self.save()
-
-    def save(self, *args, **kwargs):
-        previous = RecurringWorkoutAlert.objects.filter(id=self.id).first()
-        if previous:
-            current_time = timezone.now().time()
-            if self.time >= current_time:
-                self.activated = False
-
-        return super().save(*args, **kwargs)
 
 
 class WorkoutComment(models.Model):

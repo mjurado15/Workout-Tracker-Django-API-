@@ -62,7 +62,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class ScheduledDateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ScheduledWorkoutDate
-        exclude = ["activated"]
+        fields = "__all__"
         read_only_fields = ["workout"]
 
     def validate_datetime(self, value):
@@ -86,7 +86,7 @@ class RecurringAlertSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.RecurringWorkoutAlert
-        exclude = ["activated"]
+        fields = "__all__"
         read_only_fields = ["workout"]
 
     def validate_week_days(self, value):

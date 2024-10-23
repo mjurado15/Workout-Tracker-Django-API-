@@ -42,19 +42,6 @@ class TestRecurringWorkoutAlertModel:
             == f"{recurring_alert.workout.name} - {recurring_alert.get_week_days_display()} {recurring_alert.time}"
         )
 
-    def test_default_values(self, workout_created):
-        week_days = [0, 1, 4]
-        time = timezone.now().time()
-
-        alert_data = {
-            "time": time,
-            "week_days": week_days,
-            "workout": workout_created,
-        }
-        recurring_alert = RecurringWorkoutAlert.objects.create(**alert_data)
-
-        assert not recurring_alert.activated
-
     def test_recurring_alert_workout_relationship(self, workout_created):
         week_days = [0, 1, 4]
         time = timezone.now().time()
@@ -101,47 +88,3 @@ class TestRecurringWorkoutAlertModel:
         recurring_alert = RecurringWorkoutAlert(**alert_data)
 
         assert recurring_alert.get_week_days_display() == "No set days"
-
-    def test_activate_method(self, workout_created):
-        week_days = [0, 1, 4]
-        time = timezone.now().time()
-
-        alert_data = {
-            "time": time,
-            "week_days": week_days,
-            "workout": workout_created,
-        }
-        recurring_alert = RecurringWorkoutAlert.objects.create(**alert_data)
-
-        assert not recurring_alert.activated
-        recurring_alert.activate()
-
-        assert recurring_alert.activated
-
-    def test_deactivate__when_time_is_updated_by_one_greater_than_current_time(
-        self, workout_created
-    ):
-        week_days = [0, 1, 4]
-        time = (timezone.now() - timedelta(hours=1)).time()
-        alert_data = {
-            "time": time,
-            "week_days": week_days,
-            "workout": workout_created,
-            "activated": True,
-        }
-        recurring_alert = RecurringWorkoutAlert.objects.create(**alert_data)
-        assert recurring_alert.activated
-
-        # time is not updated
-        recurring_alert.save()
-        assert recurring_alert.activated
-
-        # The time is updated to a time less than the current one
-        recurring_alert.time = (timezone.now() - timedelta(minutes=20)).time()
-        recurring_alert.save()
-        assert recurring_alert.activated
-
-        # The time is updated to a time later than the current one
-        recurring_alert.time = (timezone.now() + timedelta(minutes=30)).time()
-        recurring_alert.save()
-        assert not recurring_alert.activated
