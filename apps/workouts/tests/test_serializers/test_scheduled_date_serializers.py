@@ -5,6 +5,7 @@ import pytest
 from django_mock_queries.query import MockModel
 
 from workouts.serializers import ScheduledDateSerializer
+from workouts.tests.utils import serialize_datetime
 
 
 pytestmark = [pytest.mark.unit]
@@ -16,8 +17,7 @@ class TestScheduledDateSerializer:
         mock_workout = MockModel(**workout_data, pk=str(workout_data["id"]))
 
         scheduled_data = {
-            "date": timezone.localdate(),
-            "time": timezone.now().time(),
+            "datetime": timezone.now(),
             "workout": mock_workout,
         }
         mock_scheduled_date = MockModel(**scheduled_data)
@@ -28,16 +28,14 @@ class TestScheduledDateSerializer:
         serializer = ScheduledDateSerializer(mock_scheduled_date)
 
         expected_data = {
-            "date": str(scheduled_data["date"]),
-            "time": str(scheduled_data["time"]),
-            "workout": str(workout_data["id"]),
+            "datetime": serialize_datetime(scheduled_data["datetime"]),
+            "workout": str(scheduled_data["workout"].id),
         }
         assert serializer.data == expected_data
 
     def test_valid_data(self):
         scheduled_data = {
-            "date": "2024-03-12",
-            "time": "19:30:00",
+            "datetime": "2024-03-12 19:30:00",
         }
         serializer = ScheduledDateSerializer(data=scheduled_data)
 
@@ -55,8 +53,7 @@ class TestScheduledDateSerializer:
         mock_workout = MockModel(id=uuid.uuid4())
 
         scheduled_data = {
-            "date": "2024-03-12",
-            "time": "18:32:00",
+            "datetime": "2024-03-12 19:30:00",
         }
         mock_modelserializer_create = mocker.patch(
             "workouts.serializers.serializers.ModelSerializer.create",

@@ -1,9 +1,9 @@
 import random
+import datetime
 
 import factory
 from factory.django import DjangoModelFactory
 
-from users.tests.factories import UserFactory
 from workouts import models
 
 
@@ -56,8 +56,13 @@ class ScheduledDateFactory(DjangoModelFactory):
     class Meta:
         model = models.ScheduledWorkoutDate
 
-    date = factory.Faker("date_this_month", before_today=False, after_today=True)
-    time = factory.Faker("time_object")
+    datetime = factory.Faker(
+        "date_time_this_month",
+        before_now=False,
+        after_now=True,
+        tzinfo=datetime.timezone.utc,
+    )
+
     workout = factory.SubFactory(WorkoutFactory)
 
 

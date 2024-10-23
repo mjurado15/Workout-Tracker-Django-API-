@@ -3,8 +3,10 @@ import datetime
 
 import pytest
 from django.urls import reverse
+from django.utils.timezone import make_aware
 
 from workouts.models import ScheduledWorkoutDate, Workout
+from workouts.tests.utils import serialize_datetime
 
 
 pytestmark = [pytest.mark.integration, pytest.mark.django_db]
@@ -17,8 +19,7 @@ class ParentScheduledDateView:
     def create_expected_scheduled_date(self, scheduled_date):
         scheduled_date_dict = {
             "id": str(scheduled_date.id),
-            "date": str(scheduled_date.date),
-            "time": str(scheduled_date.time),
+            "datetime": serialize_datetime(scheduled_date.datetime),
             "workout": str(scheduled_date.workout.id),
         }
 
@@ -26,7 +27,7 @@ class ParentScheduledDateView:
 
 
 class TestListScheduledDateView(ParentScheduledDateView):
-    def test_user_can_only_access_scheduled_dates_of_their_workouts_sorted_by_date_and_time(
+    def test_user_can_only_access_scheduled_dates_of_their_workouts_sorted_by_datetime(
         self,
         api_client,
         create_workout_with,
@@ -35,18 +36,15 @@ class TestListScheduledDateView(ParentScheduledDateView):
     ):
         target_workout = create_workout_with(type=Workout.SCHEDULED)
         scheduled1 = create_scheduled_date_with(
-            date=datetime.date(2024, 10, 14),
-            time=datetime.time(18, 0),
+            datetime=make_aware(datetime.datetime(2024, 10, 14, 18, 0, 0)),
             workout=target_workout,
         )
         scheduled2 = create_scheduled_date_with(
-            date=datetime.date(2024, 10, 14),
-            time=datetime.time(20, 0),
+            datetime=make_aware(datetime.datetime(2024, 10, 14, 20, 0, 0)),
             workout=target_workout,
         )
         scheduled3 = create_scheduled_date_with(
-            date=datetime.date(2024, 10, 12),
-            time=datetime.time(21, 0),
+            datetime=make_aware(datetime.datetime(2024, 10, 12, 21, 0, 0)),
             workout=target_workout,
         )
 
@@ -140,8 +138,7 @@ class TestCreateScheduledDateView(ParentScheduledDateView):
         workout_id = str(workout_created.id)
 
         scheduled_date_data = {
-            "date": scheduled_date_built.date,
-            "time": scheduled_date_built.time,
+            "datetime": str(scheduled_date_built.datetime),
         }
 
         api_client.force_authenticate(user=authenticated_user)
@@ -154,6 +151,7 @@ class TestCreateScheduledDateView(ParentScheduledDateView):
         assert response.status_code == 201
         assert ScheduledWorkoutDate.objects.count() == 1
         scheduled_created = ScheduledWorkoutDate.objects.first()
+        scheduled_date_data["datetime"] = scheduled_date_built.datetime
 
         assert scheduled_created.workout.is_scheduled()
         assert all(
@@ -173,8 +171,7 @@ class TestCreateScheduledDateView(ParentScheduledDateView):
         authenticated_user = target_workout.user
 
         scheduled_date_data = {
-            "date": scheduled_date_built.date,
-            "time": scheduled_date_built.time,
+            "datetime": str(scheduled_date_built.datetime),
         }
 
         assert not target_workout.is_scheduled()
@@ -189,6 +186,7 @@ class TestCreateScheduledDateView(ParentScheduledDateView):
         assert response.status_code == 201
         assert ScheduledWorkoutDate.objects.count() == 1
         scheduled_created = ScheduledWorkoutDate.objects.first()
+        scheduled_date_data["datetime"] = scheduled_date_built.datetime
 
         assert scheduled_created.workout.is_scheduled()
         assert all(
@@ -235,8 +233,7 @@ class TestCreateScheduledDateView(ParentScheduledDateView):
     ):
         workout_id = str(workout_created.id)
         scheduled_date_data = {
-            "date": scheduled_date_built.date,
-            "time": scheduled_date_built.time,
+            "datetime": str(scheduled_date_built.datetime),
         }
 
         response = api_client.post(
@@ -349,9 +346,7 @@ class TestPartialUpdateScheduledDateView(ParentScheduledDateView):
         old_scheduled_date = scheduled_date_created
         scheduled_date_id = str(old_scheduled_date.id)
 
-        new_data = {
-            "date": scheduled_date_built.date,
-        }
+        new_data = {"datetime": str(scheduled_date_built.datetime)}
 
         api_client.force_authenticate(user=authenticated_user)
         response = api_client.patch(
@@ -364,6 +359,7 @@ class TestPartialUpdateScheduledDateView(ParentScheduledDateView):
         updated_scheduled_date = ScheduledWorkoutDate.objects.get(
             id=old_scheduled_date.id
         )
+        new_data["datetime"] = scheduled_date_built.datetime
 
         assert all(
             getattr(updated_scheduled_date, field) == new_data[field]
@@ -381,9 +377,7 @@ class TestPartialUpdateScheduledDateView(ParentScheduledDateView):
 
         scheduled_date_id = str(uuid.uuid4())
 
-        new_data = {
-            "date": scheduled_date_built.date,
-        }
+        new_data = {"datetime": str(scheduled_date_built.datetime)}
 
         api_client.force_authenticate(user=authenticated_user)
         response = api_client.patch(
@@ -409,9 +403,7 @@ class TestPartialUpdateScheduledDateView(ParentScheduledDateView):
         old_scheduled_date = scheduled_date_created
         scheduled_date_id = str(old_scheduled_date.id)
 
-        new_data = {
-            "date": scheduled_date_built.date,
-        }
+        new_data = {"datetime": str(scheduled_date_built.datetime)}
 
         api_client.force_authenticate(user=authenticated_user)
         response = api_client.patch(
@@ -431,9 +423,7 @@ class TestPartialUpdateScheduledDateView(ParentScheduledDateView):
         workout_id = str(uuid.uuid4())
         scheduled_date_id = str(uuid.uuid4())
 
-        new_data = {
-            "date": scheduled_date_built.date,
-        }
+        new_data = {"datetime": str(scheduled_date_built.datetime)}
 
         api_client.force_authenticate(user=authenticated_user)
         response = api_client.patch(
@@ -481,9 +471,7 @@ class TestPartialUpdateScheduledDateView(ParentScheduledDateView):
         old_scheduled_date = scheduled_date_created
         scheduled_date_id = str(old_scheduled_date.id)
 
-        new_data = {
-            "date": scheduled_date_built.date,
-        }
+        new_data = {"datetime": str(scheduled_date_built.datetime)}
 
         response = api_client.patch(
             f"{self.url}{workout_id}/{self.scheduled_dates_url}{scheduled_date_id}/",

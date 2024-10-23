@@ -101,15 +101,15 @@ class Workout(models.Model):
 
 class ScheduledWorkoutDate(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    date = models.DateField()
-    time = models.TimeField()
+    datetime = models.DateTimeField()
+    activated = models.BooleanField(default=False)
 
     workout = models.ForeignKey(
         Workout, on_delete=models.CASCADE, related_name="scheduled_dates"
     )
 
     def __str__(self):
-        return f"{self.workout.name} - {self.date} {self.time}"
+        return f"{self.workout.name} - {self.datetime}"
 
 
 class RecurringWorkoutAlert(models.Model):

@@ -11,12 +11,8 @@ pytestmark = [pytest.mark.unit, pytest.mark.django_db]
 
 class TestScheduledWorkoutDateModel:
     def test_create_scheduled_date(self, workout_created):
-        date = timezone.localdate()
-        time = timezone.now().time()
-
         date_data = {
-            "date": date,
-            "time": time,
+            "datetime": timezone.now(),
             "workout": workout_created,
         }
         scheduled_date = ScheduledWorkoutDate.objects.create(**date_data)
@@ -27,28 +23,30 @@ class TestScheduledWorkoutDateModel:
         )
 
     def test_scheduled_date_str(self, workout_created):
-        date = timezone.localdate()
-        time = timezone.now().time()
-
         date_data = {
-            "date": date,
-            "time": time,
+            "datetime": timezone.now(),
             "workout": workout_created,
         }
         scheduled_date = ScheduledWorkoutDate(**date_data)
 
         assert (
             str(scheduled_date)
-            == f"{scheduled_date.workout.name} - {scheduled_date.date} {scheduled_date.time}"
+            == f"{scheduled_date.workout.name} - {scheduled_date.datetime}"
         )
 
-    def test_scheduled_date_workout_relationship(self, workout_created):
-        date = timezone.localdate()
-        time = timezone.now().time()
-
+    def test_create_scheduled_default_values(self, workout_created):
         date_data = {
-            "date": date,
-            "time": time,
+            "datetime": timezone.now(),
+            "workout": workout_created,
+        }
+        scheduled_date = ScheduledWorkoutDate.objects.create(**date_data)
+
+        assert scheduled_date.id is not None
+        assert not scheduled_date.activated
+
+    def test_scheduled_date_workout_relationship(self, workout_created):
+        date_data = {
+            "datetime": timezone.now(),
             "workout": workout_created,
         }
         scheduled_date = ScheduledWorkoutDate.objects.create(**date_data)
@@ -57,12 +55,8 @@ class TestScheduledWorkoutDateModel:
         assert workout_created.scheduled_dates.first() == scheduled_date
 
     def test_workout_cascade_delete(self, workout_created):
-        date = timezone.localdate()
-        time = timezone.now().time()
-
         date_data = {
-            "date": date,
-            "time": time,
+            "datetime": timezone.now(),
             "workout": workout_created,
         }
         ScheduledWorkoutDate.objects.create(**date_data)

@@ -20,7 +20,7 @@ class ScheduledDateViews:
                     status=status.HTTP_412_PRECONDITION_FAILED,
                 )
 
-            scheduled_dates = workout.scheduled_dates.all().order_by("date", "time")
+            scheduled_dates = workout.scheduled_dates.all().order_by("datetime")
             queryset = self.filter_queryset(scheduled_dates)
 
             page = self.paginate_queryset(queryset)

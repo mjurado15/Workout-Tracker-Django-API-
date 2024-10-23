@@ -61,7 +61,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class ScheduledDateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ScheduledWorkoutDate
-        fields = "__all__"
+        exclude = ["activated"]
         read_only_fields = ["workout"]
 
     def create(self, validated_data):

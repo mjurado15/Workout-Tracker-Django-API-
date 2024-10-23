@@ -109,9 +109,7 @@ class TestWorkoutModel:
             "type": Workout.SCHEDULED,
         }
         workout = Workout.objects.create(**workout_data)
-        workout.scheduled_dates.create(
-            workout=workout, date=timezone.localdate(), time=timezone.now().time()
-        )
+        workout.scheduled_dates.create(workout=workout, datetime=timezone.now())
 
         assert not workout.is_recurrent()
         assert workout.scheduled_dates.count() == 1
