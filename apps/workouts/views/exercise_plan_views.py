@@ -2,10 +2,20 @@ from rest_framework import viewsets
 from django.db.models.functions import Lower
 from django.shortcuts import get_object_or_404
 
+from drf_spectacular.utils import extend_schema_view, extend_schema
+
 from workouts.models import ExercisePlan, Workout
 from workouts.serializers import ExercisePlanSerializer
 
 
+@extend_schema_view(
+    list=extend_schema(tags=["workout exercise plans"]),
+    create=extend_schema(tags=["workout exercise plans"]),
+    retrieve=extend_schema(tags=["workout exercise plans"]),
+    update=extend_schema(tags=["workout exercise plans"]),
+    partial_update=extend_schema(tags=["workout exercise plans"]),
+    destroy=extend_schema(tags=["workout exercise plans"]),
+)
 class ExercisePlanViews(viewsets.ModelViewSet):
     serializer_class = ExercisePlanSerializer
 

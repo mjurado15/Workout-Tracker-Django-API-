@@ -3,9 +3,15 @@ from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from drf_spectacular.utils import extend_schema_view, extend_schema
+
 from workouts import models, serializers
 
 
+@extend_schema_view(
+    list=extend_schema(tags=["exercise categories"]),
+    exercises=extend_schema(tags=["exercise categories"]),
+)
 class ExerciseCategoryViews(viewsets.GenericViewSet, mixins.ListModelMixin):
     queryset = models.ExerciseCategory.objects.all().order_by(Lower("name"))
     serializer_class = serializers.ExerciseCategorySerializer

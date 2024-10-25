@@ -2,10 +2,20 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
+from drf_spectacular.utils import extend_schema, extend_schema_view
+
 from workouts.models import ScheduledWorkoutDate, Workout
 from workouts.serializers import ScheduledDateSerializer
 
 
+@extend_schema_view(
+    list=extend_schema(tags=["scheduled workout dates"]),
+    create=extend_schema(tags=["scheduled workout dates"]),
+    retrieve=extend_schema(tags=["scheduled workout dates"]),
+    update=extend_schema(tags=["scheduled workout dates"]),
+    partial_update=extend_schema(tags=["scheduled workout dates"]),
+    destroy=extend_schema(tags=["scheduled workout dates"]),
+)
 class ScheduledDateViews(viewsets.ModelViewSet):
     serializer_class = ScheduledDateSerializer
 

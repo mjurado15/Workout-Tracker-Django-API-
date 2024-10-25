@@ -1,10 +1,20 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 
+from drf_spectacular.utils import extend_schema, extend_schema_view
+
 from workouts.models import WorkoutComment, Workout
 from workouts.serializers import CommentSerializer
 
 
+@extend_schema_view(
+    list=extend_schema(tags=["workout comments"]),
+    create=extend_schema(tags=["workout comments"]),
+    retrieve=extend_schema(tags=["workout comments"]),
+    update=extend_schema(tags=["workout comments"]),
+    partial_update=extend_schema(tags=["workout comments"]),
+    destroy=extend_schema(tags=["workout comments"]),
+)
 class CommentViews(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
 

@@ -2,10 +2,20 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
+from drf_spectacular.utils import extend_schema, extend_schema_view
+
 from workouts.models import RecurringWorkoutAlert, Workout
 from workouts.serializers import RecurringAlertSerializer
 
 
+@extend_schema_view(
+    list=extend_schema(tags=["recurring workout alerts"]),
+    create=extend_schema(tags=["recurring workout alerts"]),
+    retrieve=extend_schema(tags=["recurring workout alerts"]),
+    update=extend_schema(tags=["recurring workout alerts"]),
+    partial_update=extend_schema(tags=["recurring workout alerts"]),
+    destroy=extend_schema(tags=["recurring workout alerts"]),
+)
 class RecurringAlertViews(viewsets.ModelViewSet):
     serializer_class = RecurringAlertSerializer
 

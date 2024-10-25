@@ -26,3 +26,9 @@ class TokenObtainPairSerializer(simplejwt_serializers.TokenObtainPairSerializer)
         tokens = super().validate(attrs)
         data = {"user": UserSerializer(self.user).data, **tokens}
         return data
+
+
+class LoginResponseSerializer(serializers.Serializer):
+    access = serializers.CharField(max_length=55)
+    refresh = serializers.CharField(max_length=55)
+    user = UserSerializer()
