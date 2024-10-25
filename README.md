@@ -2,7 +2,8 @@
 
 Welcome! This project is a **Django-based application** designed for users to track their workouts and progress.
 
-Below, you'll find the **requirements**, **installation instructions**, **testing information**, and **custom commands** to help you work with the project.
+Below, you'll find the **requirements**, **installation instructions**, **accessing the Admin Dashboard**, **API documentation**, **testing information**, **Celery and Celery Beat execution**, and **extra commands**.
+
 
 ## Requirements
 
@@ -22,7 +23,9 @@ The main dependencies are listed in the `requirements.txt` file, including:
 - pytest + plugins for testing
 - psycopg3 (for PostgreSQL support)
 - Celery
+- drf-spectacular (for API documentation)
 - Other packages as needed for specific functionality
+
 
 ## Instalation
 
@@ -87,24 +90,31 @@ python manage.py runserver
 
 The app will be available at http://localhost:8000.
 
-## Running Celery
 
-To run Celery, open a new terminal window and navigate to your project directory, then execute the following command:
+## Accessing the Admin Dashboard
 
-```bash
-celery -A workout_tracker worker --loglevel=INFO
-```
-Workout_tracker is the name of the Django application
+If you have superuser permissions, you can access the **Admin Dashboard** at the following URL:
 
-### Running Celery Beat
+- **Admin Dashboard**: http://localhost:8000/admin/
 
-To run Celery Beat, which is used for scheduling tasks, open another terminal window and execute:
+To log in, use the superuser credentials you created using the command:
 
 ```bash
-celery -A workout_tracker beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+python manage.py createsuperuser
 ```
 
-This will start the scheduler that sends tasks to the Celery worker based on the schedule you define in your Django application.
+This dashboard allows you to manage application data and users effectively.
+
+
+## API Documentation with Swagger
+
+This application provides API documentation using Swagger. You can access the interactive API documentation UI at the following URLs:
+
+- Swagger UI: http://localhost:8000/api/schema/swagger-ui/
+- ReDoc: http://localhost:8000/api/schema/redoc/
+
+These endpoints will give you an overview of the available API endpoints and allow you to test them interactively.
+
 
 ## Testing
 
@@ -136,6 +146,26 @@ pytest --cov=my_app   # you can add any other pytest command
 We are using pytest-django so the tests will be run on a temporary database, leaving the main one intact.
 
 
+## Running Celery
+
+To run Celery, open a new terminal window and navigate to your project directory, then execute the following command:
+
+```bash
+celery -A workout_tracker worker --loglevel=INFO
+```
+Workout_tracker is the name of the Django application
+
+### Running Celery Beat
+
+To run Celery Beat, which is used for scheduling tasks, open another terminal window and execute:
+
+```bash
+celery -A workout_tracker beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+```
+
+This will start the scheduler that sends tasks to the Celery worker based on the schedule you define in your Django application.
+
+
 ## Extra commands
 
 Here are some useful commands available in the application:
@@ -145,6 +175,14 @@ Here are some useful commands available in the application:
 ```bash
 python manage.py createsuperuser
 ```
+
+### Populate the database with exercises and categories
+
+```bash
+python manage.py populate_exercises
+```
+
+This command populates the database with sample data for exercises and their respective categories.
 
 ### Dump the database to a file
 
