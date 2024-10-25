@@ -123,10 +123,12 @@ class TestListRecurringAlertView(ParentRecurringAlertView):
 
 class TestCreateRecurringAlertView(ParentRecurringAlertView):
     def test_create_alert_for_recurring_type_workout(
-        self, api_client, workout_created, recurring_alert_built
+        self, api_client, create_workout_with, recurring_alert_built
     ):
-        authenticated_user = workout_created.user
-        workout_id = str(workout_created.id)
+        target_workout = create_workout_with(type=Workout.RECURRENT)
+        workout_id = str(target_workout.id)
+
+        authenticated_user = target_workout.user
 
         alert_data = {
             "time": recurring_alert_built.time,
@@ -142,8 +144,8 @@ class TestCreateRecurringAlertView(ParentRecurringAlertView):
 
         assert response.status_code == 201
         assert RecurringWorkoutAlert.objects.count() == 1
-        alert_created = RecurringWorkoutAlert.objects.first()
 
+        alert_created = RecurringWorkoutAlert.objects.first()
         assert alert_created.workout.is_recurrent()
         assert all(
             getattr(alert_created, field) == alert_data[field] for field in alert_data
@@ -176,8 +178,8 @@ class TestCreateRecurringAlertView(ParentRecurringAlertView):
 
         assert response.status_code == 201
         assert RecurringWorkoutAlert.objects.count() == 1
-        alert_created = RecurringWorkoutAlert.objects.first()
 
+        alert_created = RecurringWorkoutAlert.objects.first()
         assert alert_created.workout.is_recurrent()
         assert all(
             getattr(alert_created, field) == alert_data[field] for field in alert_data
@@ -344,12 +346,10 @@ class TestPartialUpdateRecurringAlertView(ParentRecurringAlertView):
         )
 
         assert response.status_code == 200
-        updated_alert = RecurringWorkoutAlert.objects.get(id=old_alert.id)
 
-        assert all(
-            getattr(updated_alert, field) == new_data[field] for field in new_data
-        )
-        expected_data = self.create_expected_alert(updated_alert)
+        old_alert.refresh_from_db()
+        assert all(getattr(old_alert, field) == new_data[field] for field in new_data)
+        expected_data = self.create_expected_alert(old_alert)
 
         assert response.json() == expected_data
 
@@ -439,9 +439,9 @@ class TestPartialUpdateRecurringAlertView(ParentRecurringAlertView):
         )
 
         assert response.status_code == 200
-        updated_alert = RecurringWorkoutAlert.objects.get(id=old_alert.id)
-        expected_data = self.create_expected_alert(updated_alert)
 
+        old_alert.refresh_from_db()
+        expected_data = self.create_expected_alert(old_alert)
         assert response.json() == expected_data
 
     def test_unauthenticated_user_cannot_partial_update_alert(

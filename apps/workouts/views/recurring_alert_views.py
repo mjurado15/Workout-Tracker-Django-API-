@@ -1,73 +1,53 @@
-from rest_framework import status
-from rest_framework.decorators import action
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
-from workouts.models import RecurringWorkoutAlert
+from workouts.models import RecurringWorkoutAlert, Workout
 from workouts.serializers import RecurringAlertSerializer
 
 
-class RecurringAlertViews:
-    @action(methods=["GET", "POST"], detail=True)
-    def recurring_alerts(self, request, *args, **kwargs):
-        workout = self.get_object()
-        recurring_alert_serializer = RecurringAlertSerializer
+class RecurringAlertViews(viewsets.ModelViewSet):
+    serializer_class = RecurringAlertSerializer
 
-        if request.method == "GET":
-            if not workout.is_recurrent():
-                return Response(
-                    {"detail": "The workout is not recurrent."},
-                    status=status.HTTP_412_PRECONDITION_FAILED,
-                )
-
-            recurring_alerts = workout.recurring_alerts.all().order_by("time")
-            queryset = self.filter_queryset(recurring_alerts)
-
-            page = self.paginate_queryset(queryset)
-            if page is not None:
-                serializer = recurring_alert_serializer(page, many=True)
-                return self.get_paginated_response(serializer.data)
-
-            serializer = recurring_alert_serializer(queryset, many=True)
-            return Response(serializer.data)
-
-        if request.method == "POST":
-            if not workout.is_recurrent():
-                workout.switch_to_recurrent()
-
-            serializer = recurring_alert_serializer(
-                data=request.data, context={"workout": workout}
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    @action(
-        methods=["GET", "PATCH", "DELETE"],
-        detail=True,
-        url_path="recurring_alerts/(?P<recurring_alert_pk>[^/.]+)",
-    )
-    def recurring_alert_details(self, request, *args, **kwargs):
-        workout = self.get_object()
-        recurring_alert = get_object_or_404(
-            RecurringWorkoutAlert,
-            pk=kwargs.get("recurring_alert_pk"),
-            workout=workout,
+    def get_queryset(self):
+        workout = self.kwargs.get("workout") or get_object_or_404(
+            Workout, pk=self.kwargs["workout_pk"], user=self.request.user
         )
-        recurring_alert_serializer = RecurringAlertSerializer
 
-        if request.method == "GET":
-            data = recurring_alert_serializer(recurring_alert).data
-            return Response(data)
+        return RecurringWorkoutAlert.objects.filter(workout=workout).order_by("time")
 
-        if request.method == "PATCH":
-            serializer = recurring_alert_serializer(
-                recurring_alert, data=request.data, partial=True
+    def get_serializer_context(self):
+        context = {
+            "request": self.request,
+            "format": self.format_kwarg,
+            "view": self,
+        }
+
+        if self.request.method == "POST":
+            context["workout"] = self.kwargs["workout"]
+
+        return context
+
+    def list(self, request, *args, **kwargs):
+        workout = get_object_or_404(
+            Workout, pk=self.kwargs["workout_pk"], user=self.request.user
+        )
+        self.kwargs["workout"] = workout
+
+        if not workout.is_recurrent():
+            return Response(
+                {"detail": "The workout is not recurrent."},
+                status=status.HTTP_412_PRECONDITION_FAILED,
             )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data)
+        return super().list(request, *args, **kwargs)
 
-        if request.method == "DELETE":
-            recurring_alert.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+    def create(self, request, *args, **kwargs):
+        workout = get_object_or_404(
+            Workout, pk=self.kwargs["workout_pk"], user=self.request.user
+        )
+        self.kwargs["workout"] = workout
+
+        if not workout.is_recurrent():
+            workout.switch_to_recurrent()
+
+        return super().create(request, *args, **kwargs)

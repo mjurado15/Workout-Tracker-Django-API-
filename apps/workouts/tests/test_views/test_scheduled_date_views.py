@@ -132,10 +132,12 @@ class TestListScheduledDateView(ParentScheduledDateView):
 
 class TestCreateScheduledDateView(ParentScheduledDateView):
     def test_create_scheduled_date_for_scheduled_type_workout(
-        self, api_client, workout_created, scheduled_date_built
+        self, api_client, create_workout_with, scheduled_date_built
     ):
-        authenticated_user = workout_created.user
-        workout_id = str(workout_created.id)
+        target_workout = create_workout_with(type=Workout.SCHEDULED)
+        workout_id = str(target_workout.id)
+
+        authenticated_user = target_workout.user
 
         scheduled_date_data = {
             "datetime": str(scheduled_date_built.datetime),
@@ -356,16 +358,14 @@ class TestPartialUpdateScheduledDateView(ParentScheduledDateView):
         )
 
         assert response.status_code == 200
-        updated_scheduled_date = ScheduledWorkoutDate.objects.get(
-            id=old_scheduled_date.id
-        )
+
+        old_scheduled_date.refresh_from_db()
         new_data["datetime"] = scheduled_date_built.datetime
 
         assert all(
-            getattr(updated_scheduled_date, field) == new_data[field]
-            for field in new_data
+            getattr(old_scheduled_date, field) == new_data[field] for field in new_data
         )
-        expected_data = self.create_expected_scheduled_date(updated_scheduled_date)
+        expected_data = self.create_expected_scheduled_date(old_scheduled_date)
 
         assert response.json() == expected_data
 
@@ -455,11 +455,9 @@ class TestPartialUpdateScheduledDateView(ParentScheduledDateView):
         )
 
         assert response.status_code == 200
-        updated_scheduled_date = ScheduledWorkoutDate.objects.get(
-            id=old_scheduled_date.id
-        )
-        expected_data = self.create_expected_scheduled_date(updated_scheduled_date)
 
+        old_scheduled_date.refresh_from_db()
+        expected_data = self.create_expected_scheduled_date(old_scheduled_date)
         assert response.json() == expected_data
 
     def test_unauthenticated_user_cannot_partial_update_scheduled_date(

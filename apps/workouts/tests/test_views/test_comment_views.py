@@ -293,12 +293,10 @@ class TestPartialUpdateCommentView(ParentWorkoutCommentView):
         )
 
         assert response.status_code == 200
-        updated_comment = WorkoutComment.objects.get(id=old_comment.id)
 
-        assert all(
-            getattr(updated_comment, field) == new_data[field] for field in new_data
-        )
-        expected_data = self.create_expected_comment(updated_comment)
+        old_comment.refresh_from_db()
+        assert all(getattr(old_comment, field) == new_data[field] for field in new_data)
+        expected_data = self.create_expected_comment(old_comment)
 
         assert response.json() == expected_data
 
@@ -385,9 +383,9 @@ class TestPartialUpdateCommentView(ParentWorkoutCommentView):
         )
 
         assert response.status_code == 200
-        updated_comment = WorkoutComment.objects.get(id=old_comment.id)
-        expected_data = self.create_expected_comment(updated_comment)
 
+        old_comment.refresh_from_db()
+        expected_data = self.create_expected_comment(old_comment)
         assert response.json() == expected_data
 
     def test_unauthenticated_user_cannot_partial_update_comment(

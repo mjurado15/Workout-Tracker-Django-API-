@@ -16,6 +16,7 @@ django-timezone-field==7.0
 django_mock_queries==2.3.0
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1
+drf-nested-routers==0.94.1
 factory_boy==3.3.1
 Faker==30.6.0
 iniconfig==2.0.0

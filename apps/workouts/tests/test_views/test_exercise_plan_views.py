@@ -318,12 +318,12 @@ class TestPartialUpdateExercisePlanView(ParentExercisePlanView):
         )
 
         assert response.status_code == 200
-        plan_updated = ExercisePlan.objects.get(id=old_exercise_plan.id)
 
+        old_exercise_plan.refresh_from_db()
         assert all(
-            getattr(plan_updated, field) == new_data[field] for field in new_data
+            getattr(old_exercise_plan, field) == new_data[field] for field in new_data
         )
-        expected_data = self.create_expected_exercise_plan(plan_updated)
+        expected_data = self.create_expected_exercise_plan(old_exercise_plan)
 
         assert response.json() == expected_data
 
@@ -416,8 +416,9 @@ class TestPartialUpdateExercisePlanView(ParentExercisePlanView):
         )
 
         assert response.status_code == 200
-        updated_plan = ExercisePlan.objects.get(id=old_exercise_plan.id)
-        expected_data = self.create_expected_exercise_plan(updated_plan)
+
+        old_exercise_plan.refresh_from_db()
+        expected_data = self.create_expected_exercise_plan(old_exercise_plan)
 
         assert response.json() == expected_data
 

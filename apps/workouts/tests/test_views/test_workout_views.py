@@ -165,13 +165,13 @@ class TestUpdateWorkoutView(ParentWorkoutView):
         )
 
         assert response.status_code == 200
-        workout_created = Workout.objects.get(id=old_workout.id)
 
+        old_workout.refresh_from_db()
         assert all(
-            getattr(workout_created, field) == new_workout_data[field]
+            getattr(old_workout, field) == new_workout_data[field]
             for field in new_workout_data
         )
-        expected_data = self.create_expected_workout(workout_created)
+        expected_data = self.create_expected_workout(old_workout)
 
         assert response.json() == expected_data
 
@@ -267,13 +267,13 @@ class TestPartialUpdateWorkoutView(ParentWorkoutView):
         )
 
         assert response.status_code == 200
-        workout_updated = Workout.objects.get(id=old_workout.id)
 
+        old_workout.refresh_from_db()
         assert all(
-            getattr(workout_updated, field) == new_workout_data[field]
+            getattr(old_workout, field) == new_workout_data[field]
             for field in new_workout_data
         )
-        expected_data = self.create_expected_workout(workout_updated)
+        expected_data = self.create_expected_workout(old_workout)
 
         assert response.json() == expected_data
 
@@ -333,8 +333,8 @@ class TestPartialUpdateWorkoutView(ParentWorkoutView):
 
         assert response.status_code == 200
 
-        workout_updated = Workout.objects.get(id=old_workout.id)
-        expected_data = self.create_expected_workout(workout_updated)
+        old_workout.refresh_from_db()
+        expected_data = self.create_expected_workout(old_workout)
 
         assert response.json() == expected_data
 
