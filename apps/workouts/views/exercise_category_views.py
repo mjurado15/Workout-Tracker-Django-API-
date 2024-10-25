@@ -16,6 +16,7 @@ class ExerciseCategoryViews(viewsets.GenericViewSet, mixins.ListModelMixin):
     queryset = models.ExerciseCategory.objects.all().order_by(Lower("name"))
     serializer_class = serializers.ExerciseCategorySerializer
 
+    @extend_schema(responses={200: serializers.ExerciseSerializer(many=True)})
     @action(methods=["GET"], detail=True)
     def exercises(self, request, *args, **kwargs):
         category = self.get_object()

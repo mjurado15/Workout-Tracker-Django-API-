@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.utils import timezone
 
+from drf_spectacular.utils import extend_schema_field
+
 from . import models
 
 
@@ -17,6 +19,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
         model = models.Exercise
         fields = "__all__"
 
+    @extend_schema_field(str)
     def get_category(self, instance):
         return str(instance.category)
 
@@ -42,6 +45,9 @@ class WorkoutSerializer(serializers.ModelSerializer):
         model = models.Workout
         fields = "__all__"
         read_only_fields = ["type", "user", "created_at", "updated_at"]
+        extra_kwargs = {
+            "type": {"allow_blank": True},
+        }
 
     def create(self, validated_data):
         validated_data["user"] = self.context["request"].user
