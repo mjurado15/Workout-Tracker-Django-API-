@@ -53,6 +53,8 @@ THIRD_APPS = [
     "rest_framework",
     "corsheaders",
     "django_celery_beat",
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
 ]
 
 INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
@@ -162,6 +164,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_PAGINATION_CLASS": "workout_tracker.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 # Celery configs
@@ -172,3 +175,16 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BROKER_CONNECTION_RETRY = True
 CELERY_BROKER_CONNECTION_MAX_RETRIES = 5
 CELERY_BROKER_CONNECTION_RETRY_INTERVAL = 2.0
+
+
+# DRF SPECTACULAR
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Workout Tracker Django API",
+    "DESCRIPTION": "Django-based application designed for users to track their workouts and progress.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_DIST": "SIDECAR",
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+    "REDOC_DIST": "SIDECAR",
+    "PREPROCESSING_HOOKS": ["workout_tracker.drf_spectacular_hooks.preprocess_schema"],
+}
