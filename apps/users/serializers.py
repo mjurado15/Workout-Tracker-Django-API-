@@ -55,12 +55,6 @@ class LoginSerializer(auth_serializers.LoginSerializer):
     email = serializers.EmailField()
 
 
-class LoginResponseSerializer(serializers.Serializer):
-    access = serializers.CharField(max_length=55)
-    refresh = serializers.CharField(max_length=55)
-    user = UserSerializer()
-
-
 class VerifyEmailSerializer(auth_regist_serializers.VerifyEmailSerializer):
     def validate_key(self, value):
         from urllib.parse import unquote
