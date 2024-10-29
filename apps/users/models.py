@@ -11,7 +11,17 @@ from django.core.mail import send_mail
 from django.utils.translation import gettext_lazy as _
 
 
+from allauth.account.models import EmailAddress
+
+
 class CustomUserManager(BaseUserManager):
+    def setup_user_email(self, user, verified=False):
+        """Creates proper EmailAddress for the user that was just signed up"""
+        email_address = EmailAddress(
+            user=user, email=user.email, primary=True, verified=verified
+        )
+        email_address.save()
+
     def create_user(self, email, first_name, last_name, password, **extra_fields):
         if not email:
             raise ValueError("The given email must be set")
@@ -39,20 +49,16 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
 
-        return self.create_user(email, first_name, last_name, password, **extra_fields)
+        user = self.create_user(email, first_name, last_name, password, **extra_fields)
+        self.setup_user_email(user, verified=True)
+        return user
 
 
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     first_name = models.CharField("first name", max_length=150)
     last_name = models.CharField("last name", max_length=150)
-    email = models.EmailField(
-        "email address",
-        unique=True,
-        error_messages={
-            "unique": _("A user with that email already exists."),
-        },
-    )
+    email = models.EmailField("email address")
     is_staff = models.BooleanField(
         _("staff status"),
         default=False,

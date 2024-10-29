@@ -22,19 +22,6 @@ class TestUserModel:
         assert user.id is not None
         assert user.email == user_data["email"]
 
-    def test_create_user_with_existing_email_raises_error(
-        self, user_created, user_built
-    ):
-        user_data = {
-            "first_name": user_built.first_name,
-            "last_name": user_built.last_name,
-            "email": user_created.email,
-            "password": user_built.password,
-        }
-
-        with pytest.raises(IntegrityError):
-            User.objects.create_user(**user_data)
-
     @pytest.mark.parametrize("field", ["first_name", "last_name", "email", "password"])
     def test_create_user_without_required_fields_raises_error(self, user_built, field):
         user_data = {
@@ -101,7 +88,11 @@ class TestUserModel:
         assert user.email == user_data["email"]
         assert getattr(user, optional_field) == default_value
 
-    def test_create_superuser(self, user_built):
+    def test_create_superuser(self, user_built, mocker):
+        mock_setup_user_email = mocker.patch(
+            "users.models.CustomUserManager.setup_user_email"
+        )
+
         user_data = {
             "first_name": user_built.first_name,
             "last_name": user_built.last_name,
@@ -115,6 +106,7 @@ class TestUserModel:
         assert user.email == user_data["email"]
         assert user.is_staff
         assert user.is_superuser
+        mock_setup_user_email.assert_called_once_with(user, verified=True)
 
     def test_create_superuser_with_is_staff_False_raises_error(self, user_built):
         user_data = {

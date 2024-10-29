@@ -42,6 +42,7 @@ BASE_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
 ]
 
 LOCAL_APPS = [
@@ -51,13 +52,21 @@ LOCAL_APPS = [
 
 THIRD_APPS = [
     "rest_framework",
+    "rest_framework.authtoken",
     "corsheaders",
     "django_celery_beat",
     "drf_spectacular",
     "drf_spectacular_sidecar",
+    "allauth",
+    "allauth.headless",
+    "allauth.account",
+    "allauth.socialaccount",
+    "dj_rest_auth.registration",
 ]
 
 INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -67,6 +76,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = "workout_tracker.urls"
@@ -148,12 +158,19 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "ROTATE_REFRESH_TOKENS": True,
-    "TOKEN_OBTAIN_SERIALIZER": "users.serializers.TokenObtainPairSerializer",
-}
+
+# Email settings
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = env.str("EMAIL_HOST", default="")
+EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", default="")
+EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", default="")
+EMAIL_PORT = env.int("EMAIL_PORT", default=587)
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
+DEFAULT_FROM_EMAIL = (
+    "Workout-Tracker%s" % f' <{env.str("EMAIL_FROM")}>'
+    if env.str("EMAIL_FROM", default="")
+    else ""
+)
 
 
 REST_FRAMEWORK = {
@@ -166,6 +183,43 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 20,
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
+
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,
+    "TOKEN_OBTAIN_SERIALIZER": "users.serializers.TokenObtainPairSerializer",
+}
+
+
+# Authentication Settings
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USERNAME_REQUIRED = False
+
+HEADLESS_ONLY = True
+HEADLESS_FRONTEND_URLS = {
+    "account_confirm_email": "http://localhost:3000/account/verify-email/key/{key}",
+    "account_reset_password_from_key": "http://localhost:3000/account/password/reset/?uid={uid}&key={key}",
+    "account_signup": "https://localhost:3000/account/signup",
+}
+
+AUTHENTICATION_BACKENDS = [
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+REST_AUTH = {
+    "USE_JWT": True,
+    "REGISTER_SERIALIZER": "users.serializers.RegisterSerializer",
+    "LOGIN_SERIALIZER": "users.serializers.LoginSerializer",
+    "USER_DETAILS_SERIALIZER": "users.serializers.UserSerializer",
+    "PASSWORD_RESET_SERIALIZER": "users.serializers.PasswordResetSerializer",
+    "JWT_AUTH_HTTPONLY": False,
+}
+
 
 # Celery configs
 CELERY_BROKER_URL = env.str("CELERY_BROKER_URL")
