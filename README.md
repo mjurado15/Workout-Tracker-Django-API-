@@ -100,7 +100,7 @@ If you have superuser permissions, you can access the **Admin Dashboard** at the
 To log in, use the superuser credentials you created using the command:
 
 ```bash
-python manage.py createsuperuser
+python manage.py custom_createsuperuser   # This command is customized to consider social authentication
 ```
 
 This dashboard allows you to manage application data and users effectively.
