@@ -18,4 +18,5 @@ urlpatterns = [
         name="rest_resend_email",
     ),
     path("", include("dj_rest_auth.urls")),
+    path("google/", views.GoogleLogin.as_view(), name="google_login"),
 ]

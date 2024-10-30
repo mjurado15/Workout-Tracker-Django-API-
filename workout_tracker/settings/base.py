@@ -61,6 +61,7 @@ THIRD_APPS = [
     "allauth.headless",
     "allauth.account",
     "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
     "dj_rest_auth.registration",
 ]
 
@@ -158,6 +159,9 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Client configs
+CLIENT_URL = env.str("CLIENT_URL", default="http://127.0.0.1:3000")
+
 
 # Email settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -202,14 +206,35 @@ ACCOUNT_USERNAME_REQUIRED = False
 
 HEADLESS_ONLY = True
 HEADLESS_FRONTEND_URLS = {
-    "account_confirm_email": "http://localhost:3000/account/verify-email/key/{key}",
-    "account_reset_password_from_key": "http://localhost:3000/account/password/reset/?uid={uid}&key={key}",
-    "account_signup": "https://localhost:3000/account/signup",
+    "account_confirm_email": CLIENT_URL + "/account/verify-email/key/{key}",
+    "account_reset_password": CLIENT_URL + "/account/password/request/reset",
+    "account_reset_password_from_key": CLIENT_URL
+    + "/account/password/reset/?uid={uid}&key={key}",
+    "account_signup": CLIENT_URL + "/account/signup",
 }
 
 AUTHENTICATION_BACKENDS = [
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
+
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "APP": {
+            "client_id": env.str("GOOGLE_CLIENT_ID", default=""),
+            "secret": env.str("GOOGLE_CLIENT_SECRET", default=""),
+        },
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        },
+        "VERIFIED_EMAIL": True,
+        "EMAIL_AUTHENTICATION": True,
+    },
+}
 
 REST_AUTH = {
     "USE_JWT": True,
