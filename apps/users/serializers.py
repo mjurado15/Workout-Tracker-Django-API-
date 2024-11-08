@@ -21,8 +21,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 class RegisterSerializer(auth_regist_serializers.RegisterSerializer):
     username = None
+    email = serializers.EmailField(max_length=254)
     first_name = serializers.CharField(max_length=150)
     last_name = serializers.CharField(max_length=150)
+    password1 = serializers.CharField(write_only=True, max_length=128)
+    password2 = serializers.CharField(write_only=True, max_length=128)
 
     def get_cleaned_data(self):
         return {
@@ -54,6 +57,10 @@ class RegisterSerializer(auth_regist_serializers.RegisterSerializer):
 class LoginSerializer(auth_serializers.LoginSerializer):
     username = None
     email = serializers.EmailField()
+
+
+class LoginResponseSerializer(auth_serializers.JWTSerializerWithExpiration):
+    user = UserSerializer()
 
 
 class VerifyEmailSerializer(auth_regist_serializers.VerifyEmailSerializer):

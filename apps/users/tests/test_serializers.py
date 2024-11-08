@@ -31,14 +31,13 @@ class TestUserSerializer:
 
     def test_valid_data(self, user_built):
         user_data = {
-            "email": user_built.email,
             "first_name": user_built.first_name,
             "last_name": user_built.last_name,
         }
         serializer = UserSerializer(data=user_data)
 
         assert serializer.is_valid()
-        assert set(serializer.validated_data) == {"email", "first_name", "last_name"}
+        assert set(serializer.validated_data) == {"first_name", "last_name"}
 
     def test_invalid_data(self):
         user_data = {}

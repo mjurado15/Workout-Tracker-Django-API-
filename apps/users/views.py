@@ -1,7 +1,7 @@
 from django.conf import settings
 
 from dj_rest_auth.registration import views as registration_views
-from dj_rest_auth.serializers import JWTSerializer
+from dj_rest_auth import views as dj_rest_auth_views
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 
@@ -20,6 +20,13 @@ class GoogleLogin(registration_views.SocialLoginView):
     callback_url = settings.CLIENT_URL
     client_class = OAuth2Client
 
-    @extend_schema(responses={200: JWTSerializer})
+    @extend_schema(responses={200: serializers.LoginResponseSerializer})
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
+
+class LoginView(dj_rest_auth_views.LoginView):
+
+    @extend_schema(responses={200: serializers.LoginResponseSerializer})
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)

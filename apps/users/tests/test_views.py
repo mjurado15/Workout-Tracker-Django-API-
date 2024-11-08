@@ -137,7 +137,13 @@ class TestLoginView:
         response = api_client.post(self.url, credentials, format="json")
 
         assert response.status_code == 200
-        assert set(response.data.keys()) == {"access", "refresh", "user"}
+        assert set(response.data.keys()) == {
+            "access",
+            "refresh",
+            "access_expiration",
+            "refresh_expiration",
+            "user",
+        }
         assert response.data["user"] == {
             "id": str(user_created.id),
             "email": user_created.email,
