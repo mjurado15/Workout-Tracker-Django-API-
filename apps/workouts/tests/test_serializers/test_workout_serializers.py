@@ -1,8 +1,9 @@
 import uuid
+from datetime import timedelta
 from django.utils import timezone
 
 import pytest
-from django_mock_queries.query import MockModel
+from django_mock_queries.query import MockModel, MockSet
 
 from workouts.serializers import WorkoutSerializer
 from workouts.tests.utils import serialize_datetime
@@ -12,22 +13,27 @@ pytestmark = [pytest.mark.unit]
 
 
 class TestWorkoutSerializer:
-    def test_serialize_model(self):
+    @pytest.fixture
+    def mock_user(self):
         user_data = {
             "id": uuid.uuid4(),
             "email": "test@test.com",
         }
-        mock_user = MockModel(**user_data, pk=str(user_data["id"]))
+        return MockModel(**user_data, pk=str(user_data["id"]))
 
-        workout_data = {
+    @pytest.fixture
+    def workout_data(self, mock_user):
+        return {
             "id": uuid.uuid4(),
             "name": "Test exercise plan",
             "description": "Description",
             "user": mock_user,
             "created_at": timezone.now(),
             "updated_at": timezone.now(),
-            "type": "S",
+            "type": None,
         }
+
+    def test_serialize_model(self, workout_data):
         mock_workout = MockModel(**workout_data)
         mock_workout.serializable_value = lambda field_name: getattr(
             mock_workout, field_name
@@ -40,9 +46,69 @@ class TestWorkoutSerializer:
             "id": str(workout_data["id"]),
             "created_at": serialize_datetime(workout_data["created_at"]),
             "updated_at": serialize_datetime(workout_data["updated_at"]),
-            "user": str(user_data["id"]),
+            "user": str(workout_data["user"].id),
+            "status": "Pending",
         }
         assert serializer.data == expected_data
+
+    def test_serialize_status__active_scheduled_workout(self, workout_data):
+        current_datetime = timezone.now()
+        mock_scheduled_dates = MockSet(
+            MockModel(datetime=current_datetime - timedelta(hours=2)),
+            MockModel(datetime=current_datetime + timedelta(minutes=2)),
+        )
+
+        workout_data = {
+            **workout_data,
+            "type": "S",
+            "scheduled_dates": mock_scheduled_dates,
+        }
+        mock_workout = MockModel(**workout_data)
+        mock_workout.serializable_value = lambda field_name: getattr(
+            mock_workout, field_name
+        )
+
+        serializer = WorkoutSerializer(mock_workout)
+
+        assert serializer.data["type"] == "S"
+        assert serializer.data["status"] == "Active"
+
+    def test_serialize_status__completed_scheduled_workout(self, workout_data):
+        current_datetime = timezone.now()
+        mock_scheduled_dates = MockSet(
+            MockModel(datetime=current_datetime - timedelta(hours=2)),
+            MockModel(datetime=current_datetime - timedelta(minutes=1)),
+        )
+
+        workout_data = {
+            **workout_data,
+            "type": "S",
+            "scheduled_dates": mock_scheduled_dates,
+        }
+        mock_workout = MockModel(**workout_data)
+        mock_workout.serializable_value = lambda field_name: getattr(
+            mock_workout, field_name
+        )
+
+        serializer = WorkoutSerializer(mock_workout)
+
+        assert serializer.data["type"] == "S"
+        assert serializer.data["status"] == "Completed"
+
+    def test_serialize_status__active_recurrent_workout(self, workout_data):
+        workout_data = {
+            **workout_data,
+            "type": "R",
+        }
+        mock_workout = MockModel(**workout_data)
+        mock_workout.serializable_value = lambda field_name: getattr(
+            mock_workout, field_name
+        )
+
+        serializer = WorkoutSerializer(mock_workout)
+
+        assert serializer.data["type"] == "R"
+        assert serializer.data["status"] == "Active"
 
     def test_valid_data(self):
         workout_data = {

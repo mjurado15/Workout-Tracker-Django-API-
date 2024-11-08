@@ -41,6 +41,8 @@ class ExercisePlanSerializer(serializers.ModelSerializer):
 
 
 class WorkoutSerializer(serializers.ModelSerializer):
+    status = serializers.SerializerMethodField()
+
     class Meta:
         model = models.Workout
         fields = "__all__"
@@ -48,6 +50,20 @@ class WorkoutSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "type": {"allow_blank": True},
         }
+
+    @extend_schema_field({"type": "string", "enum": ["Active", "Pending", "Completed"]})
+    def get_status(self, instance):
+        if instance.type == "S":
+            pending_dates = instance.scheduled_dates.filter(datetime__gt=timezone.now())
+            if pending_dates.exists():
+                return "Active"
+            else:
+                return "Completed"
+
+        if instance.type == "R":
+            return "Active"
+
+        return "Pending"
 
     def create(self, validated_data):
         validated_data["user"] = self.context["request"].user
