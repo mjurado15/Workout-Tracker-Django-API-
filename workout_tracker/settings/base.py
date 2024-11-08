@@ -206,11 +206,11 @@ ACCOUNT_USERNAME_REQUIRED = False
 
 HEADLESS_ONLY = True
 HEADLESS_FRONTEND_URLS = {
-    "account_confirm_email": CLIENT_URL + "/account/verify-email/key/{key}",
+    "account_confirm_email": CLIENT_URL + "/account/verify-email/?key={key}",
     "account_reset_password": CLIENT_URL + "/account/password/request/reset",
     "account_reset_password_from_key": CLIENT_URL
     + "/account/password/reset/?uid={uid}&key={key}",
-    "account_signup": CLIENT_URL + "/account/signup",
+    "account_signup": CLIENT_URL + "/sign-up",
 }
 
 AUTHENTICATION_BACKENDS = [
@@ -243,6 +243,7 @@ REST_AUTH = {
     "USER_DETAILS_SERIALIZER": "users.serializers.UserSerializer",
     "PASSWORD_RESET_SERIALIZER": "users.serializers.PasswordResetSerializer",
     "JWT_AUTH_HTTPONLY": False,
+    "JWT_AUTH_RETURN_EXPIRATION": True,
 }
 
 
