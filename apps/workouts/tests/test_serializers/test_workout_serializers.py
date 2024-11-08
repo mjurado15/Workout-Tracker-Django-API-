@@ -30,7 +30,8 @@ class TestWorkoutSerializer:
             "user": mock_user,
             "created_at": timezone.now(),
             "updated_at": timezone.now(),
-            "type": None,
+            "type": "",
+            "exercise_plans": MockSet(),
         }
 
     def test_serialize_model(self, workout_data):
@@ -48,7 +49,10 @@ class TestWorkoutSerializer:
             "updated_at": serialize_datetime(workout_data["updated_at"]),
             "user": str(workout_data["user"].id),
             "status": "Pending",
+            "exercises": 0,
         }
+        expected_data.pop("exercise_plans")
+
         assert serializer.data == expected_data
 
     def test_serialize_status__active_scheduled_workout(self, workout_data):
@@ -109,6 +113,22 @@ class TestWorkoutSerializer:
 
         assert serializer.data["type"] == "R"
         assert serializer.data["status"] == "Active"
+
+    def test_serializer_exercises(self, workout_data):
+        workout_data = {
+            **workout_data,
+            "exercise_plans": MockSet(
+                MockModel(id=uuid.uuid4()),
+            ),
+        }
+
+        mock_workout = MockModel(**workout_data)
+        mock_workout.serializable_value = lambda field_name: getattr(
+            mock_workout, field_name
+        )
+
+        serializer = WorkoutSerializer(mock_workout)
+        assert serializer.data["exercises"] == 1
 
     def test_valid_data(self):
         workout_data = {

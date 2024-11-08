@@ -42,6 +42,7 @@ class ExercisePlanSerializer(serializers.ModelSerializer):
 
 class WorkoutSerializer(serializers.ModelSerializer):
     status = serializers.SerializerMethodField()
+    exercises = serializers.SerializerMethodField()
 
     class Meta:
         model = models.Workout
@@ -64,6 +65,9 @@ class WorkoutSerializer(serializers.ModelSerializer):
             return "Active"
 
         return "Pending"
+
+    def get_exercises(self, instance) -> int:
+        return instance.exercise_plans.count()
 
     def create(self, validated_data):
         validated_data["user"] = self.context["request"].user
