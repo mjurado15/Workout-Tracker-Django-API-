@@ -24,6 +24,13 @@ class ExerciseSerializer(serializers.ModelSerializer):
         return str(instance.category)
 
 
+class NestedExerciseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Exercise
+        fields = "__all__"
+        depth = 2
+
+
 class ExercisePlanSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ExercisePlan
@@ -32,7 +39,7 @@ class ExercisePlanSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         repr = super().to_representation(instance)
-        repr["exercise"] = ExerciseSerializer(instance.exercise).data
+        repr["exercise"] = NestedExerciseSerializer(instance.exercise).data
         return repr
 
     def create(self, validated_data):

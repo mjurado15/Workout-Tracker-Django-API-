@@ -19,21 +19,19 @@ class TestExercisePlanSerializer:
         }
         mock_workout = MockModel(**workout_data, pk=str(workout_data["id"]))
 
+        category_data = {
+            "id": uuid.uuid4(),
+            "name": "Test Workout",
+        }
+        mock_category = MockModel(**category_data)
+
         exercise_data = {
             "id": uuid.uuid4(),
             "name": "Running",
             "description": "running description",
-            "category": "Cardio",
+            "category": mock_category,
         }
         mock_exercise = MockModel(**exercise_data)
-
-        mock_exercise_serializer = mocker.patch(
-            "workouts.serializers.ExerciseSerializer"
-        )
-        mock_exercise_serializer.return_value.data = {
-            **exercise_data,
-            "id": str(exercise_data["id"]),
-        }
 
         plan_data = {
             "id": uuid.uuid4(),
@@ -58,7 +56,11 @@ class TestExercisePlanSerializer:
             "id": str(plan_data["id"]),
             "created_at": serialize_datetime(plan_data["created_at"]),
             "updated_at": serialize_datetime(plan_data["updated_at"]),
-            "exercise": {**exercise_data, "id": str(exercise_data["id"])},
+            "exercise": {
+                **exercise_data,
+                "id": str(exercise_data["id"]),
+                "category": {**category_data, "id": str(category_data["id"])},
+            },
             "workout": str(workout_data["id"]),
         }
         assert serializer.data == expected_data

@@ -21,6 +21,7 @@ class ParentWorkoutView:
             "type": workout.type,
             "status": "Pending",
             "user": str(workout.user.id),
+            "exercises": workout.exercise_plans.count(),
             "created_at": serialize_datetime(workout.created_at),
             "updated_at": serialize_datetime(workout.updated_at),
         }

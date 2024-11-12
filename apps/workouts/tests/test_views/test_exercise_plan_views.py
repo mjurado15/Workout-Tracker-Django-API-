@@ -4,7 +4,7 @@ import pytest
 from django.urls import reverse
 
 from workouts.models import ExercisePlan
-from workouts.serializers import ExerciseSerializer
+from workouts.serializers import NestedExerciseSerializer
 from workouts.tests.utils import serialize_datetime
 
 
@@ -27,7 +27,7 @@ class ParentExercisePlanView:
             "created_at": serialize_datetime(exercise_plan.created_at),
             "updated_at": serialize_datetime(exercise_plan.updated_at),
             "workout": str(exercise_plan.workout.id),
-            "exercise": ExerciseSerializer(exercise_plan.exercise).data,
+            "exercise": NestedExerciseSerializer(exercise_plan.exercise).data,
         }
 
         return exercise_plan_dict
